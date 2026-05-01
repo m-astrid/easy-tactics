@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/easy-tactics/api/internal/infrastructure/database"
+	"github.com/easy-tactics/api/database"
 	_ "github.com/mattn/go-sqlite3"
 )
 
