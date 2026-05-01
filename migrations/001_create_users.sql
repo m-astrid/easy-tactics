@@ -1,6 +1,5 @@
--- Migration: 001_create_users_table.sql
--- Description: Users table for bot authentication and roles
--- Created: 2026-05-01
+-- +goose NOFILE
+-- Description: Create users table
 
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

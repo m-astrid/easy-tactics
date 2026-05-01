@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 // Fighter represents a fencer
 type Fighter struct {
@@ -42,3 +45,47 @@ type Fight struct {
 	FightDate      string
 	CreatedAt      time.Time
 }
+
+func (f *Fighter) Validate() error {
+	if f.UUID == "" {
+		return ErrValidationRequired
+	}
+	if f.FullName == "" {
+		return ErrValidationRequired
+	}
+	if f.Slug == "" {
+		return ErrValidationRequired
+	}
+	return nil
+}
+
+func (t *Tournament) Validate() error {
+	if t.UUID == "" {
+		return ErrValidationRequired
+	}
+	if t.Name == "" {
+		return ErrValidationRequired
+	}
+	if t.FighterUUID == "" {
+		return ErrValidationRequired
+	}
+	return nil
+}
+
+func (f *Fight) Validate() error {
+	if f.UUID == "" {
+		return ErrValidationRequired
+	}
+	if f.FighterUUID == "" {
+		return ErrValidationRequired
+	}
+	if f.TournamentUUID == "" {
+		return ErrValidationRequired
+	}
+	if f.OpponentName == "" {
+		return ErrValidationRequired
+	}
+	return nil
+}
+
+var ErrValidationRequired = fmt.Errorf("validation error: required field missing")
