@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  api:
+    build: ./docker/api
+    ports:
+      - "50051:50051"
+    volumes:
+      - ./data:/data
+    environment:
+      - OWNER_TELEGRAM_ID=${OWNER_TELEGRAM_ID:-}
+      - DB_PATH=/data/fighters.db
+      - AI_SERVICE_URL=http://python-ai:8000
+      - HEMAGON_MCP_URL=http://hemagon-mcp:8080
+    depends_on:
+      - python-ai
+
+  bot:
+    build: ./docker/bot
+    environment:
+      - API_ADDR=api:50051
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+    depends_on:
+      - api
+
+  python-ai:
+    build: ./docker/python/ai-service
+    ports:
+      - "8000:8000"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - HEMAGON_MCP_URL=http://hemagon-mcp:8080
+
+  hemagon-mcp:
+    build: ./docker/python/mcp/hemagon
+    ports:
+      - "8081:8080"
+
+volumes:
+  data:
+
+networks:
+  default:
+    name: easy-tactics-network
