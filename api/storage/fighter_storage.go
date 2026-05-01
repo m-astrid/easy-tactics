@@ -51,6 +51,25 @@ func (s *FighterStorage) GetByUUID(uuid string) (*domain.Fighter, error) {
 	return &f, nil
 }
 
+func (s *FighterStorage) GetBySlug(slug string) (*domain.Fighter, error) {
+	row := s.db.QueryRow(`
+		SELECT id, uuid, slug, full_name, city, club, hemagon_url, created_at, updated_at
+		FROM fighters WHERE slug = ?
+	`, slug)
+
+	var f domain.Fighter
+	err := row.Scan(&f.ID, &f.UUID, &f.Slug, &f.FullName, &f.City, &f.Club, &f.HemagonURL, &f.CreatedAt, &f.UpdatedAt)
+
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return &f, nil
+}
+
 func (s *FighterStorage) Search(query string) ([]*domain.Fighter, error) {
 	rows, err := s.db.Query(`
 		SELECT id, uuid, slug, full_name, city, club, hemagon_url, created_at, updated_at
