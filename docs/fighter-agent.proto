@@ -1,0 +1,467 @@
+syntax = "proto3";
+
+package fighter.agent.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+option go_package = "github.com/fighter-agent/api/v1;fapiv1";
+
+// ============================================================================
+// Auth Service
+// ============================================================================
+
+service AuthService {
+  rpc AddUser(AddUserRequest) returns (User);
+  rpc RemoveUser(RemoveUserRequest) returns (Empty);
+  rpc GetUser(GetUserRequest) returns (User);
+  rpc ListUsers(ListUsersRequest) returns (UserList);
+  rpc UpdateUserRole(UpdateUserRoleRequest) returns (User);
+  rpc CheckAccess(CheckAccessRequest) returns (AccessResponse);
+}
+
+message AddUserRequest {
+  int64 telegram_id = 1;
+  string username = 2;
+  string full_name = 3;
+  string role = 4;  // owner, admin, coach, fighter
+}
+
+message RemoveUserRequest {
+  int64 telegram_id = 1;
+}
+
+message GetUserRequest {
+  int64 telegram_id = 1;
+}
+
+message ListUsersRequest {
+  string role_filter = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message UpdateUserRoleRequest {
+  int64 telegram_id = 1;
+  string new_role = 2;
+}
+
+message CheckAccessRequest {
+  int64 telegram_id = 1;
+  string required_role = 2;
+}
+
+message AccessResponse {
+  bool allowed = 1;
+  string reason = 2;
+}
+
+message User {
+  int64 telegram_id = 1;
+  string username = 2;
+  string full_name = 3;
+  string role = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+message UserList {
+  repeated User users = 1;
+  int32 total = 2;
+}
+
+// ============================================================================
+// Fighter Service
+// ============================================================================
+
+service FighterService {
+  rpc SearchFighter(SearchFighterRequest) returns (SearchFighterResponse);
+  rpc GetFighter(GetFighterRequest) returns (Fighter);
+  rpc CreateFighter(CreateFighterRequest) returns (Fighter);
+  rpc UpdateFighter(UpdateFighterRequest) returns (Fighter);
+  rpc ListFighters(ListFightersRequest) returns (ListFightersResponse);
+}
+
+message SearchFighterRequest {
+  string query = 1;
+  bool search_hemagon = 2;
+}
+
+message SearchFighterResponse {
+  enum Source {
+    SOURCE_UNKNOWN = 0;
+    SOURCE_LOCAL = 1;
+    SOURCE_HEMAGON = 2;
+    SOURCE_NOT_FOUND = 3;
+  }
+
+  message FighterMatch {
+    string uuid = 1;
+    string slug = 2;
+    string full_name = 3;
+    string city = 4;
+    string club = 5;
+    string hemagon_url = 6;
+    repeated string photos = 7;
+    google.protobuf.Timestamp last_updated = 8;
+    bool exists_in_db = 9;
+  }
+
+  Source source = 1;
+  repeated FighterMatch matches = 2;
+  FighterMatch selected = 3;
+}
+
+message GetFighterRequest {
+  oneof id {
+    string uuid = 1;
+    string slug = 2;
+  }
+}
+
+message CreateFighterRequest {
+  string full_name = 1;
+  string city = 2;
+  string club = 3;
+  string hemagon_url = 4;
+  repeated string photos = 5;
+}
+
+message UpdateFighterRequest {
+  string uuid = 1;
+  string full_name = 2;
+  string city = 3;
+  string club = 4;
+  string hemagon_url = 5;
+  repeated string photos_to_add = 6;
+  repeated string tags_to_add = 7;
+}
+
+message ListFightersRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+  string tag_filter = 3;
+}
+
+message ListFightersResponse {
+  repeated Fighter fighters = 1;
+  int32 total = 2;
+}
+
+// ============================================================================
+// Tournament Service
+// ============================================================================
+
+service TournamentService {
+  rpc GetFighterTournaments(GetFighterTournamentsRequest) returns (TournamentList);
+  rpc ParseTournaments(ParseTournamentsRequest) returns (Task);
+  rpc GetTournament(GetTournamentRequest) returns (Tournament);
+}
+
+message GetFighterTournamentsRequest {
+  string fighter_uuid = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message ParseTournamentsRequest {
+  string fighter_uuid = 1;
+  google.protobuf.Timestamp date_from = 2;  // default: 1 year ago
+  string callback_url = 3;
+}
+
+message GetTournamentRequest {
+  string uuid = 1;
+}
+
+// ============================================================================
+// Fight Service
+// ============================================================================
+
+service FightService {
+  rpc GetFighterFights(GetFighterFightsRequest) returns (FightList);
+  rpc GetFight(GetFightRequest) returns (Fight);
+  rpc SearchFightVideo(SearchFightVideoRequest) returns (VideoSearchResult);
+}
+
+message GetFighterFightsRequest {
+  string fighter_uuid = 1;
+  string tournament_uuid = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+}
+
+message GetFightRequest {
+  string uuid = 1;
+}
+
+message SearchFightVideoRequest {
+  repeated string fight_uuids = 1;
+  bool search_all_sources = 2;
+  string callback_url = 3;
+}
+
+// ============================================================================
+// Analysis Service
+// ============================================================================
+
+service AnalysisService {
+  rpc GenerateSummary(GenerateSummaryRequest) returns (Task);
+  rpc AddObservation(AddObservationRequest) returns (Observation);
+  rpc DeleteObservation(DeleteObservationRequest) returns (Empty);
+  rpc EditSummary(EditSummaryRequest) returns (Summary);
+  rpc GetSummaryHistory(GetSummaryHistoryRequest) returns (HistoryList);
+  rpc GetObservations(GetObservationsRequest) returns (ObservationList);
+  rpc RollbackSummary(RollbackSummaryRequest) returns (Summary);
+}
+
+message GenerateSummaryRequest {
+  string fighter_uuid = 1;
+  repeated string fight_uuids = 2;
+  bool include_tournaments = 3;
+  bool regenerate = 4;
+  string callback_url = 5;
+}
+
+message AddObservationRequest {
+  string fighter_uuid = 1;
+  string content = 2;
+  string source = 3;
+  repeated string tags = 4;
+  string video_uuid = 5;
+  string tournament_uuid = 6;
+  string fight_uuid = 7;
+}
+
+message DeleteObservationRequest {
+  string observation_uuid = 1;
+}
+
+message EditSummaryRequest {
+  string fighter_uuid = 1;
+  string content = 2;
+  string reason = 3;
+}
+
+message GetSummaryHistoryRequest {
+  string fighter_uuid = 1;
+  int32 limit = 2;
+}
+
+message GetObservationsRequest {
+  string fighter_uuid = 1;
+  string source = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+}
+
+message RollbackSummaryRequest {
+  string fighter_uuid = 1;
+  string version = 2;
+}
+
+// ============================================================================
+// Video Service
+// ============================================================================
+
+service VideoService {
+  rpc UploadUserVideo(UploadVideoRequest) returns (VideoMetadata);
+  rpc GetUserVideos(GetUserVideosRequest) returns (UserVideoList);
+  rpc DeleteUserVideo(DeleteUserVideoRequest) returns (Empty);
+}
+
+message UploadUserVideoRequest {
+  string fighter_uuid = 1;
+  bytes video_data = 1;
+  string comment = 2;
+  string video_format = 3;
+}
+
+message GetUserVideosRequest {
+  string fighter_uuid = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message DeleteUserVideoRequest {
+  string video_uuid = 1;
+}
+
+// ============================================================================
+// Task Service
+// ============================================================================
+
+service TaskService {
+  rpc GetTask(GetTaskRequest) returns (Task);
+  rpc ListTasks(ListTasksRequest) returns (TaskList);
+  rpc CancelTask(CancelTaskRequest) returns (Task);
+}
+
+message GetTaskRequest {
+  string task_uuid = 1;
+}
+
+message ListTasksRequest {
+  string fighter_uuid = 1;
+  string status = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+}
+
+message CancelTaskRequest {
+  string task_uuid = 1;
+}
+
+// ============================================================================
+// Common Messages
+// ============================================================================
+
+message Fighter {
+  string uuid = 1;
+  string slug = 2;
+  string full_name = 3;
+  string city = 4;
+  string club = 5;
+  string hemagon_url = 6;
+  repeated FighterPhoto photos = 7;
+  repeated string tags = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+  Summary latest_summary = 11;
+}
+
+message FighterPhoto {
+  string url = 1;
+  string source = 2;
+  google.protobuf.Timestamp taken_at = 3;
+}
+
+message TournamentList {
+  repeated Tournament tournaments = 1;
+  int32 total = 2;
+}
+
+message Tournament {
+  string uuid = 1;
+  string name = 2;
+  string city = 3;
+  string country = 4;
+  google.protobuf.Timestamp start_date = 5;
+  string hemagon_url = 6;
+  FighterStats stats = 7;
+}
+
+message FighterStats {
+  int32 wins = 1;
+  int32 losses = 2;
+  int32 place = 3;
+  repeated string opponent_uuids = 4;
+}
+
+message FightList {
+  repeated Fight fights = 1;
+  int32 total = 2;
+}
+
+message Fight {
+  string uuid = 1;
+  string tournament_uuid = 2;
+  string opponent_uuid = 3;
+  string opponent_name = 4;
+  int32 score_win = 5;
+  int32 score_lose = 6;
+  string round = 7;
+  google.protobuf.Timestamp fight_date = 8;
+  string video_status = 9;
+  string video_url = 10;
+  int64 video_timestamp = 11;
+  int32 video_duration = 12;
+}
+
+message VideoSearchResult {
+  message Video {
+    string platform = 1;
+    string video_url = 2;
+    string title = 3;
+    int32 duration_seconds = 4;
+    
+    message FightTimestamp {
+      string fight_uuid = 1;
+      int64 timestamp = 2;
+      int32 duration_seconds = 3;
+    }
+    repeated FightTimestamp fights = 5;
+  }
+
+  repeated Video videos = 1;
+  repeated string not_found = 2;
+}
+
+message Summary {
+  string content = 1;
+  google.protobuf.Timestamp updated_at = 2;
+  int32 version = 3;
+}
+
+message Observation {
+  string uuid = 1;
+  string fighter_uuid = 2;
+  string content = 3;
+  string source = 4;
+  repeated string tags = 5;
+  string video_uuid = 6;
+  string tournament_uuid = 7;
+  string fight_uuid = 8;
+  google.protobuf.Timestamp created_at = 9;
+}
+
+message ObservationList {
+  repeated Observation observations = 1;
+  int32 total = 2;
+}
+
+message HistoryList {
+  repeated HistoryEntry entries = 1;
+}
+
+message HistoryEntry {
+  string version = 1;
+  google.protobuf.Timestamp changed_at = 2;
+  string changed_by = 3;
+  string reason = 4;
+  string diff = 5;
+}
+
+message VideoMetadata {
+  string uuid = 1;
+  string fighter_uuid = 2;
+  string s3_key = 3;
+  string format = 4;
+  string comment = 5;
+  bool analyzed = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+
+message UserVideoList {
+  repeated VideoMetadata videos = 1;
+  int32 total = 2;
+}
+
+message Task {
+  string uuid = 1;
+  string type = 2;
+  string status = 3;
+  int32 progress = 4;
+  string current_step = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp completed_at = 7;
+  string result = 8;
+  string error = 9;
+}
+
+message TaskList {
+  repeated Task tasks = 1;
+  int32 total = 2;
+}
+
+message Empty {}
