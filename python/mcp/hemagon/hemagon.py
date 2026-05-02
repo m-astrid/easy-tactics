@@ -99,65 +99,92 @@ def scrape_profile(profile_url: str) -> dict:
         page.goto(profile_url.rstrip('/') + '/stats', wait_until="domcontentloaded", timeout=60000)
         page.wait_for_timeout(3000)
         
-        show_fights_btn = page.query_selector('button:has-text("SHOW FIGHTS WITH ME")')
-        if show_fights_btn:
-            show_fights_btn.click()
-            page.wait_for_timeout(2000)
-        
-        all_btns = page.query_selector_all('button')
-        for btn in all_btns:
-            if btn.inner_text().strip() == '50':
-                btn.click()
-                page.wait_for_timeout(2000)
-                break
-        
-        page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
-        page.wait_for_timeout(1000)
-        
         page_text = page.inner_text('body')
         lines = [l for l in page_text.split('\n') if l.strip()]
         
+        weapon_links = page.query_selector_all('a.flex')
+        print(f"=== Found {len(weapon_links)} weapon links ===")
+        for wl in weapon_links:
+            print(f"  {wl.inner_text().strip()[:40]}")
+        
         all_fights = []
-        my_name = result.get('name', '')
         
-        for i, line in enumerate(lines):
-            if my_name in line and i + 6 < len(lines):
-                my_score = lines[i + 2].strip() if i + 2 < len(lines) else ''
-                opponent = lines[i + 3].strip() if i + 3 < len(lines) else ''
-                club_b = lines[i + 4].strip() if i + 4 < len(lines) else ''
-                opponent_score = lines[i + 5].strip() if i + 5 < len(lines) else ''
-                
-                if my_score.isdigit() and opponent and opponent != my_name and len(opponent) > 2:
-                    opponent_clean = opponent.split('\t')[0].strip()
-                    if 'Round' not in opponent_clean and 'Pool' not in opponent_clean and len(opponent_clean) > 2:
-                        my_score_int = int(my_score)
-                        opp_score_int = int(opponent_score) if opponent_score.isdigit() else 0
-                        result_val = 'win' if my_score_int > opp_score_int else 'lose' if my_score_int < opp_score_int else 'draw'
-                        
-                        extra_info = lines[i + 6].strip() if i + 6 < len(lines) else ''
-                        tournament = stage = date = ''
-                        if '\t' in extra_info:
-                            parts = extra_info.split('\t')
-                            if len(parts) >= 1:
-                                tournament = parts[0].strip()
-                            if len(parts) >= 3:
-                                stage = parts[2].strip() if 'Round' in parts[2] or 'Pool' in parts[2] else ''
-                            if len(parts) >= 4:
-                                date = parts[3].strip()
-                        
-                        if opponent_clean not in [f['opponent'] for f in all_fights]:
-                            all_fights.append({
-                                'opponent': opponent_clean,
-                                'club': club_b if club_b and '\t' not in club_b else None,
-                                'user_score': my_score_int,
-                                'opponent_score': opp_score_int,
-                                'result': result_val,
-                                'tournament': tournament,
-                                'stage': stage,
-                                'date': date
-                            })
+        for weapon in result.get('weapons', []):
+            weapon_name = weapon.get('name', '')
+            if not weapon_name:
+                continue
+            
+            print(f"\n=== Processing: {weapon_name} ===")
+            
+            page.goto(profile_url.rstrip('/') + '/stats', wait_until="domcontentloaded", timeout=60000)
+            page.wait_for_timeout(2000)
+            
+            weapon_link = page.query_selector(f'a.flex:has-text("{weapon_name}")')
+            if not weapon_link:
+                short_name = weapon_name.split(' - ')[0].split(' & ')[0]
+                weapon_link = page.query_selector(f'a.flex:has-text("{short_name}")')
+            
+            if weapon_link:
+                print(f"Clicking: {weapon_name}")
+                weapon_link.click()
+                page.wait_for_timeout(1500)
+            
+            show_fights_btn = page.query_selector('button:has-text("SHOW FIGHTS WITH ME")')
+            if show_fights_btn:
+                show_fights_btn.click()
+                page.wait_for_timeout(2000)
+            
+            per_page_btns = page.query_selector_all('button')
+            for pbtn in per_page_btns:
+                if pbtn.inner_text().strip() == '50':
+                    pbtn.click()
+                    page.wait_for_timeout(1500)
+                    break
+            
+            page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
+            page.wait_for_timeout(1000)
+            
+            lines = [l for l in page.inner_text('body').split('\n') if l.strip()]
+            my_name = result.get('name', '')
+            
+            for i, line in enumerate(lines):
+                if my_name in line and i + 6 < len(lines):
+                    my_score = lines[i + 2].strip() if i + 2 < len(lines) else ''
+                    opponent = lines[i + 3].strip() if i + 3 < len(lines) else ''
+                    club_b = lines[i + 4].strip() if i + 4 < len(lines) else ''
+                    opponent_score = lines[i + 5].strip() if i + 5 < len(lines) else ''
+                    
+                    if my_score.isdigit() and opponent and opponent != my_name and len(opponent) > 2:
+                        opponent_clean = opponent.split('\t')[0].strip()
+                        if 'Round' not in opponent_clean and 'Pool' not in opponent_clean and len(opponent_clean) > 2:
+                            my_score_int = int(my_score)
+                            opp_score_int = int(opponent_score) if opponent_score.isdigit() else 0
+                            result_val = 'win' if my_score_int > opp_score_int else 'lose' if my_score_int < opp_score_int else 'draw'
+                            
+                            extra_info = lines[i + 6].strip() if i + 6 < len(lines) else ''
+                            tournament = stage = date = ''
+                            if '\t' in extra_info:
+                                parts = extra_info.split('\t')
+                                if len(parts) >= 1:
+                                    tournament = parts[0].strip()
+                                if len(parts) >= 3:
+                                    stage = parts[2].strip() if 'Round' in parts[2] or 'Pool' in parts[2] else ''
+                                if len(parts) >= 4:
+                                    date = parts[3].strip()
+                            
+                            if opponent_clean not in [f['opponent'] for f in all_fights]:
+                                all_fights.append({
+                                    'opponent': opponent_clean,
+                                    'club': club_b if club_b and '\t' not in club_b else None,
+                                    'user_score': my_score_int,
+                                    'opponent_score': opp_score_int,
+                                    'result': result_val,
+                                    'tournament': tournament,
+                                    'stage': stage,
+                                    'date': date
+                                })
         
-        print(f"=== Total fights: {len(all_fights)} ===")
+        print(f"=== Total fights from all weapons: {len(all_fights)} ===")
         result['fights'] = all_fights[:100]
         
         page.goto(profile_url.rstrip('/') + '/stats', wait_until="domcontentloaded", timeout=60000)
