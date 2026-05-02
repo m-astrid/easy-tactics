@@ -1,4 +1,4 @@
-.PHONY: help build up down restart logs clean test migrate db-reset
+.PHONY: help build up down restart logs clean test test-verbose generate migrate db-status db-reset
 
 help:
 	@echo "Easy Tactics - Available commands:"
@@ -12,6 +12,8 @@ help:
 	@echo ""
 	@echo "  make test         - Run tests"
 	@echo "  make test-verbose - Run tests with verbose output"
+	@echo ""
+	@echo "  make generate     - Generate protobuf code"
 	@echo ""
 	@echo "  make migrate      - Run database migrations"
 	@echo "  make db-status    - Show migration status"
@@ -54,3 +56,7 @@ db-reset:
 	docker-compose down -v
 	rm -f data/fighters.db
 	docker-compose up -d
+
+generate:
+	@echo "Generating protobuf code..."
+	cd api && go generate ./...
