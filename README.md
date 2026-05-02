@@ -7,7 +7,7 @@ AI-powered system for analyzing HEMA (Historical European Martial Arts) fencers.
 Easy Tactics helps coaches and fighters analyze technique by:
 - Searching fighters on Hemagon (fencing database)
 - Parsing tournaments and fight results
-- Finding videos on VK (Russian social network)
+- Finding videos on VK/YouTube 
 - Analyzing fighter technique using LLM
 - Storing summaries in markdown files
 
