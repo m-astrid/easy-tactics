@@ -204,6 +204,8 @@ def scrape_profile(profile_url: str) -> dict:
 
 
 if __name__ == "__main__":
-    result = scrape_profile("https://hemagon.com/users/eugeniya.shumakova")
+    import sys
+    url = sys.argv[1] if len(sys.argv) > 1 else "https://hemagon.com/users/eugeniya.shumakova"
+    result = scrape_profile(url)
     import json
     print(json.dumps(result, indent=2, ensure_ascii=False))
