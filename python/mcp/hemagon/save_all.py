@@ -13,19 +13,16 @@ def save_page_text(page, filename):
 
 def save_tournament_with_links(page, filename):
     filepath = os.path.join(output_dir, filename)
-    
     content = {
         'text': page.inner_text('body'),
         'links': []
     }
-    
     all_links = page.query_selector_all('a[href]')
     for link in all_links:
         href = link.get_attribute('href')
         text = link.inner_text().strip()
         if href and text:
             content['links'].append({'text': text, 'href': href})
-    
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump(content, f, ensure_ascii=False, indent=2)
     
@@ -37,10 +34,9 @@ def save_tournament_with_links(page, filename):
             json.dump({
                 'source_tournament': filename,
                 'vk_link': vk['href'],
-                'vk_name': vk['text'],
-                'note': 'VK page not scraped - external link'
+                'vk_name': vk['text']
             }, f, ensure_ascii=False, indent=2)
-        print(f"  Saved VK link: {vk_filename}")
+        print(f"  Saved VK: {vk_filename}")
 
 def set_fights_per_page(page, count=50):
     page.wait_for_timeout(1000)
@@ -77,20 +73,40 @@ with sync_playwright() as p:
     save_page_text(page, "profile.txt")
     print("  Saved: profile.txt")
     
-    print("\n=== 2. Stats page with 50 fights ===")
+    print("\n=== 2. Stats page - iterating through weapons ===")
     page.goto(profile_url + "/stats", wait_until="domcontentloaded", timeout=60000)
     page.wait_for_timeout(3000)
     
-    show_fights_btn = page.query_selector('button:has-text("SHOW FIGHTS WITH ME")')
-    if show_fights_btn:
-        show_fights_btn.click()
-        page.wait_for_timeout(2000)
+    weapon_names = ['Dussak - Women', 'Katana', 'Longsword - Women', 'Longsword & Rondel', 'Rapier - Women', 'Rapier & Dagger', 'Rapier & Dagger - Women', 'Saber - Woman', 'Spear', 'Sword & Buckler - Women']
     
-    page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
-    page.wait_for_timeout(1000)
-    set_fights_per_page(page, 50)
-    save_page_text(page, "stats_fights_50.txt")
-    print("  Saved: stats_fights_50.txt")
+    for weapon_name in weapon_names:
+        print(f"  Processing weapon: {weapon_name}")
+        
+        links = page.query_selector_all('a')
+        weapon_link = None
+        for link in links:
+            if link.inner_text().strip() == weapon_name:
+                weapon_link = link
+                break
+        
+        if weapon_link:
+            weapon_link.click()
+            page.wait_for_timeout(2000)
+            
+            save_page_text(page, f"weapon_{weapon_name.replace(' ', '_').replace('&', 'and')}.txt")
+            print(f"    Saved: weapon_{weapon_name.replace(' ', '_').replace('&', 'and')}.txt")
+            
+            show_fights_btn = page.query_selector('button:has-text("SHOW FIGHTS WITH ME")')
+            if show_fights_btn:
+                show_fights_btn.click()
+                page.wait_for_timeout(2000)
+                
+                page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
+                page.wait_for_timeout(1000)
+                set_fights_per_page(page, 50)
+                
+                save_page_text(page, f"weapon_{weapon_name.replace(' ', '_').replace('&', 'and')}_fights.txt")
+                print(f"    Saved fights")
     
     print("\n=== 3. Tournament pages with VK links ===")
     page.goto(profile_url + "/stats", wait_until="domcontentloaded", timeout=60000)
@@ -105,16 +121,12 @@ with sync_playwright() as p:
             if slug and slug not in seen:
                 seen.add(slug)
     
-    vk_count = 0
     for slug in seen:
         page.goto(f"https://hemagon.com/tournament/{slug}", wait_until="domcontentloaded", timeout=60000)
         page.wait_for_timeout(2000)
         save_tournament_with_links(page, f"tournament_{slug}.json")
-        
-        vk_links = [l for l in page.query_selector_all('a[href]') if 'vk.com' in (l.get_attribute('href') or '')]
-        vk_count += len(vk_links)
     
-    print(f"  Saved {len(seen)} tournament pages + {vk_count} VK link files")
+    print(f"  Saved {len(seen)} tournament pages")
     
     print(f"\n=== Done! Files saved to {output_dir} ===")
     browser.close()
