@@ -1,0 +1,7 @@
+module github.com/easy-tactics/bot
+
+go 1.21
+
+require github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
+
+replace github.com/easy-tactics/api => ../api

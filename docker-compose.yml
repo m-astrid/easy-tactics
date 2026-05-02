@@ -19,7 +19,8 @@ services:
     build: ./docker/bot
     environment:
       - API_ADDR=api:50051
-      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - OWNER_TELEGRAM_ID=${OWNER_TELEGRAM_ID:-}
     depends_on:
       - api
 
@@ -36,6 +37,14 @@ services:
     build: ./docker/python/mcp/hemagon
     ports:
       - "8081:8080"
+
+  vk-mcp:
+    build: ./docker/python/mcp/vk
+    ports:
+      - "8082:8080"
+    environment:
+      - VK_ACCESS_TOKEN=${VK_ACCESS_TOKEN:-}
+      - VK_GROUP_ID=${VK_GROUP_ID:-}
 
 volumes:
   data:
