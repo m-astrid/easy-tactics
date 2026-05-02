@@ -1,4 +1,4 @@
-# ⚡ Riposte - use their moves against them!
+# ⚡ Riposte/Outplay/Easy Tactics/? - use their moves against them!
 
 AI-powered system for analyzing HEMA (Historical European Martial Arts) fencers.
 
