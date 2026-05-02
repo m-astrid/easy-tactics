@@ -105,49 +105,113 @@ def scrape_profile(profile_url: str) -> dict:
             page.wait_for_timeout(2000)
         
         page_text = page.inner_text('body')
+        
         lines = [l for l in page_text.split('\n') if l.strip()]
+        
+        date_pattern = re.compile(r'[A-Za-z]{3}\s+\d{1,2},\s+\d{4}')
         
         fights_data = []
         my_name = result.get('name', '')
         
         for i, line in enumerate(lines):
-            if my_name in line:
-                my_score = lines[i + 2].strip() if i + 2 < len(lines) else ''
-                opponent = lines[i + 3].strip() if i + 3 < len(lines) else ''
-                club_b = lines[i + 4].strip() if i + 4 < len(lines) else ''
-                opponent_score = lines[i + 5].strip() if i + 5 < len(lines) else ''
-                
-                if my_score.isdigit() and opponent and opponent != my_name and len(opponent) > 2:
-                    if '\t' not in opponent and 'Round' not in opponent and 'Pool' not in opponent:
-                        my_score_int = int(my_score)
-                        opp_score_int = int(opponent_score) if opponent_score.isdigit() else 0
-                        result_val = 'win' if my_score_int > opp_score_int else 'lose' if my_score_int < opp_score_int else 'draw'
-                        
-                        tournament = ''
-                        stage = ''
-                        date = ''
-                        
-                        if i + 6 < len(lines):
-                            extra_info = lines[i + 6].strip()
-                            if '\t' in extra_info:
-                                parts = extra_info.split('\t')
-                                if len(parts) >= 1:
-                                    tournament = parts[0].strip()
-                                if len(parts) >= 3:
-                                    stage = parts[2].strip() if 'Round' in parts[2] or 'Pool' in parts[2] else ''
-                                if len(parts) >= 4:
-                                    date = parts[3].strip()
-                        
-                        fights_data.append({
-                            'opponent': opponent,
-                            'club': club_b if club_b and '\t' not in club_b else None,
-                            'user_score': my_score_int,
-                            'opponent_score': opp_score_int,
-                            'result': result_val,
-                            'tournament': tournament,
-                            'stage': stage,
-                            'date': date
-                        })
+            if date_pattern.search(line) and line.startswith('\t'):
+                parts = line.split('\t')
+                if len(parts) >= 5:
+                    date = parts[-1].strip()
+                    tournament = parts[1].strip() if parts[1].strip() else ''
+                    stage = parts[3].strip() if len(parts) > 3 and ('Round' in parts[3] or 'Pool' in parts[3]) else ''
+                    
+                    line_before = lines[i - 1].strip()
+                    line_before2 = lines[i - 2].strip() if i >= 2 else ''
+                    line_before3 = lines[i - 3].strip() if i >= 3 else ''
+                    
+                    try:
+                        if line_before.isdigit():
+                            opponent_score = int(line_before)
+                            if line_before2 and not line_before2[0].isupper() and not line_before2.isdigit():
+                                opponent_name = line_before3
+                                opponent_club = line_before2
+                            elif line_before2 and line_before2[0].isupper():
+                                opponent_name = line_before2
+                                opponent_club = ''
+                            else:
+                                continue
+                        else:
+                            continue
+                    except (ValueError, IndexError):
+                        continue
+                    
+                    user_score_idx = i - 4
+                    user_score_str = lines[user_score_idx].strip() if user_score_idx >= 0 else ''
+                    
+                    try:
+                        user_score = int(user_score_str)
+                    except ValueError:
+                        continue
+                    
+                    if not opponent_name or len(opponent_name) < 2:
+                        continue
+                    
+                    result_val = 'win' if user_score > opponent_score else 'lose' if user_score < opponent_score else 'draw'
+                    
+                    fights_data.append({
+                        'opponent': opponent_name,
+                        'club': opponent_club if opponent_club else None,
+                        'user_score': user_score,
+                        'opponent_score': opponent_score,
+                        'result': result_val,
+                        'tournament': tournament,
+                        'stage': stage,
+                        'date': date
+                    })
+            if date_pattern.search(line):
+                parts = line.split('\t')
+                if len(parts) >= 4:
+                    date = parts[-1].strip()
+                    rest = '\t'.join(parts[:-1])
+                    score_parts = re.split(r'\s+', rest.strip())
+                    
+                    if len(score_parts) >= 4:
+                        try:
+                            my_score = int(score_parts[-2])
+                            opponent_score = int(score_parts[-1])
+                            
+                            opponent_and_club = ' '.join(score_parts[:-2]).rsplit(' ', 1)
+                            if len(opponent_and_club) >= 2:
+                                opponent = opponent_and_club[0].strip()
+                                club = opponent_and_club[1].strip() if len(opponent_and_club) > 1 else None
+                            else:
+                                continue
+                            
+                            if not opponent or len(opponent) < 2:
+                                continue
+                                
+                            result_val = 'win' if my_score > opponent_score else 'lose' if my_score < opponent_score else 'draw'
+                            
+                            for j in range(i - 1, max(0, i - 5), -1):
+                                if '\t' in lines[j]:
+                                    tournament_parts = lines[j].split('\t')
+                                    if len(tournament_parts) >= 3:
+                                        tournament = tournament_parts[0].strip()
+                                        stage = tournament_parts[1].strip() if 'Round' in tournament_parts[1] or 'Pool' in tournament_parts[1] else ''
+                                        break
+                                    break
+                            else:
+                                tournament = ''
+                                stage = ''
+                            
+                            fights_data.append({
+                                'opponent': opponent,
+                                'club': club if club and '\t' not in club else None,
+                                'user_score': my_score,
+                                'opponent_score': opponent_score,
+                                'result': result_val,
+                                'tournament': tournament,
+                                'stage': stage,
+                                'date': date
+                            })
+                        except (ValueError, IndexError):
+                            continue
         
         result['fights'] = fights_data[:50]
         
