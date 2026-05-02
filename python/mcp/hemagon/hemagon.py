@@ -104,10 +104,20 @@ def scrape_profile(profile_url: str) -> dict:
             show_fights_btn.click()
             page.wait_for_timeout(2000)
         
+        all_btns = page.query_selector_all('button')
+        for btn in all_btns:
+            if btn.inner_text().strip() == '50':
+                btn.click()
+                page.wait_for_timeout(2000)
+                break
+        
+        page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
+        page.wait_for_timeout(1000)
+        
         page_text = page.inner_text('body')
         lines = [l for l in page_text.split('\n') if l.strip()]
         
-        fights_data = []
+        all_fights = []
         my_name = result.get('name', '')
         
         for i, line in enumerate(lines):
@@ -118,41 +128,39 @@ def scrape_profile(profile_url: str) -> dict:
                 opponent_score = lines[i + 5].strip() if i + 5 < len(lines) else ''
                 
                 if my_score.isdigit() and opponent and opponent != my_name and len(opponent) > 2:
-                    if '\t' not in opponent and 'Round' not in opponent and 'Pool' not in opponent:
+                    opponent_clean = opponent.split('\t')[0].strip()
+                    if 'Round' not in opponent_clean and 'Pool' not in opponent_clean and len(opponent_clean) > 2:
                         my_score_int = int(my_score)
                         opp_score_int = int(opponent_score) if opponent_score.isdigit() else 0
                         result_val = 'win' if my_score_int > opp_score_int else 'lose' if my_score_int < opp_score_int else 'draw'
                         
-                        tournament = ''
-                        stage = ''
-                        date = ''
+                        extra_info = lines[i + 6].strip() if i + 6 < len(lines) else ''
+                        tournament = stage = date = ''
+                        if '\t' in extra_info:
+                            parts = extra_info.split('\t')
+                            if len(parts) >= 1:
+                                tournament = parts[0].strip()
+                            if len(parts) >= 3:
+                                stage = parts[2].strip() if 'Round' in parts[2] or 'Pool' in parts[2] else ''
+                            if len(parts) >= 4:
+                                date = parts[3].strip()
                         
-                        if i + 6 < len(lines):
-                            extra_info = lines[i + 6].strip()
-                            if '\t' in extra_info:
-                                parts = extra_info.split('\t')
-                                if len(parts) >= 1:
-                                    tournament = parts[0].strip()
-                                if len(parts) >= 3:
-                                    stage = parts[2].strip() if 'Round' in parts[2] or 'Pool' in parts[2] else ''
-                                if len(parts) >= 4:
-                                    date = parts[3].strip()
-                        
-                        fights_data.append({
-                            'opponent': opponent,
-                            'club': club_b if club_b and '\t' not in club_b else None,
-                            'user_score': my_score_int,
-                            'opponent_score': opp_score_int,
-                            'result': result_val,
-                            'tournament': tournament,
-                            'stage': stage,
-                            'date': date
-                        })
+                        if opponent_clean not in [f['opponent'] for f in all_fights]:
+                            all_fights.append({
+                                'opponent': opponent_clean,
+                                'club': club_b if club_b and '\t' not in club_b else None,
+                                'user_score': my_score_int,
+                                'opponent_score': opp_score_int,
+                                'result': result_val,
+                                'tournament': tournament,
+                                'stage': stage,
+                                'date': date
+                            })
         
-        result['fights'] = fights_data[:50]
+        print(f"=== Total fights: {len(all_fights)} ===")
+        result['fights'] = all_fights[:100]
         
         page.goto(profile_url.rstrip('/') + '/stats', wait_until="domcontentloaded", timeout=60000)
-        page.wait_for_timeout(3000)
         
         tournament_links = page.query_selector_all('a[href*="/tournament/"]')
         
