@@ -103,6 +103,21 @@ easy-tactics/
 
 ## Commands
 
+### Prerequisites (for local development)
+```bash
+# Install protobuf compiler
+brew install protobuf
+
+# Install Go protobuf plugins
+GOPROXY=direct go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+GOPROXY=direct go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+```
+
+### Code Generation
+```bash
+make generate     # Generate protobuf code
+```
+
 ### Deployment
 ```bash
 make build        # Build Docker images
