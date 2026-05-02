@@ -55,9 +55,10 @@ cp .env.example .env
 # Edit .env with your credentials
 ```
 
-2. Start services:
+2. Build and start services:
 ```bash
-docker-compose up --build
+make build
+make up
 ```
 
 3. Set owner (optional):
@@ -100,16 +101,29 @@ easy-tactics/
 - **FightService**: Fight data, video search
 - **AnalysisService**: Summaries, observations
 
-## Development
+## Commands
 
-### Run Tests
+### Deployment
 ```bash
-cd api && go test ./...
+make build        # Build Docker images
+make up           # Start all services
+make down         # Stop all services
+make restart      # Restart all services
+make logs         # View logs (follow)
+make clean        # Remove containers and volumes
 ```
 
-### Run Migrations
+### Testing
 ```bash
-goose -dir migrations sqlite3 /data/fighters.db up
+make test         # Run tests
+make test-verbose # Run tests with verbose output
+```
+
+### Database
+```bash
+make migrate      # Run database migrations
+make db-status    # Show migration status
+make db-reset     # Reset database (deletes all data)
 ```
 
 ## License
