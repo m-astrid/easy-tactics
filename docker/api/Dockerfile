@@ -12,6 +12,7 @@ RUN go install github.com/pressly/goose/v3@latest
 WORKDIR /app
 COPY --from=builder /app/server .
 COPY migrations/ ./migrations/
+COPY api/proto/gen/ ./proto/gen/
 
 EXPOSE 50051
 
