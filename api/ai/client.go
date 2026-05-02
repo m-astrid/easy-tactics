@@ -6,7 +6,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"github.com/easy-tactics/api/proto/gen/fighter/agent/v1"
+	fapiv1 "github.com/easy-tactics/api/proto/gen/ai/service/v1"
 )
 
 type Client struct {
