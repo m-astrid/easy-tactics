@@ -1,4 +1,4 @@
-# ⚡ Knockout/Riposte/Outplay/Easy Tactics/? - use their moves against them!
+# ⚡ Exploit/Knockout/Riposte/Outplay/Easy Tactics/? - use their moves against them!
 
 AI-powered system for analyzing HEMA (Historical European Martial Arts) fencers.
 
