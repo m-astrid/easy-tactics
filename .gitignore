@@ -1,0 +1,31 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build
+/bin/
+/bot/bot
+*.exe
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data
+data/*.db
+*.sqlite
+
+# Secrets (never commit)
+*token*
+*secret*
+*password*
+*api_key*
+*api-id*
+*api-hash*
