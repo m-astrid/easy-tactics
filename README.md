@@ -1,4 +1,4 @@
-# ⚡ Easy Tactics
+# ⚡ Riposte - use their moves against them!
 
 AI-powered system for analyzing HEMA (Historical European Martial Arts) fencers.
 
