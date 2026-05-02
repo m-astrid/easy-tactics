@@ -6,6 +6,7 @@ import (
 
 	"github.com/easy-tactics/api/domain"
 	"github.com/easy-tactics/api/storage"
+	"github.com/google/uuid"
 )
 
 type FighterHandler struct {
@@ -287,7 +288,7 @@ func (h *FighterHandler) ListFighters(ctx context.Context, req *ListFightersRequ
 }
 
 func generateUUID() string {
-	return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+	return uuid.New().String()
 }
 
 func generateSlug(fullName, city string) string {
