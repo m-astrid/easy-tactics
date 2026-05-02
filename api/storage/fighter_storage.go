@@ -167,6 +167,28 @@ func (s *FighterStorage) GetTournamentsByFighterUUID(fighterUUID string) ([]*dom
 	return tournaments, nil
 }
 
+func (s *FighterStorage) GetAllTournaments() ([]*domain.Tournament, error) {
+	rows, err := s.db.Query(`
+		SELECT id, uuid, fighter_uuid, name, city, country, start_date, hemagon_url, created_at
+		FROM tournaments
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tournaments []*domain.Tournament
+	for rows.Next() {
+		var t domain.Tournament
+		if err := rows.Scan(&t.ID, &t.UUID, &t.FighterUUID, &t.Name, &t.City, &t.Country, &t.StartDate, &t.HemagonURL, &t.CreatedAt); err != nil {
+			return nil, err
+		}
+		tournaments = append(tournaments, &t)
+	}
+
+	return tournaments, nil
+}
+
 func (s *FighterStorage) CreateFight(fight *domain.Fight) error {
 	result, err := s.db.Exec(`
 		INSERT INTO fights (uuid, fighter_uuid, tournament_uuid, opponent_uuid, opponent_name, score_win, score_lose, round, fight_date)
@@ -212,6 +234,28 @@ func (s *FighterStorage) GetFightsByTournamentUUID(tournamentUUID string) ([]*do
 		SELECT id, uuid, fighter_uuid, tournament_uuid, opponent_uuid, opponent_name, score_win, score_lose, round, fight_date, created_at
 		FROM fights WHERE tournament_uuid = ?
 	`, tournamentUUID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var fights []*domain.Fight
+	for rows.Next() {
+		var f domain.Fight
+		if err := rows.Scan(&f.ID, &f.UUID, &f.FighterUUID, &f.TournamentUUID, &f.OpponentUUID, &f.OpponentName, &f.ScoreWin, &f.ScoreLose, &f.Round, &f.FightDate, &f.CreatedAt); err != nil {
+			return nil, err
+		}
+		fights = append(fights, &f)
+	}
+
+	return fights, nil
+}
+
+func (s *FighterStorage) GetAllFights() ([]*domain.Fight, error) {
+	rows, err := s.db.Query(`
+		SELECT id, uuid, fighter_uuid, tournament_uuid, opponent_uuid, opponent_name, score_win, score_lose, round, fight_date, created_at
+		FROM fights
+	`)
 	if err != nil {
 		return nil, err
 	}
