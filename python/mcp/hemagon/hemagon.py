@@ -111,7 +111,7 @@ def scrape_profile(profile_url: str) -> dict:
         my_name = result.get('name', '')
         
         for i, line in enumerate(lines):
-            if my_name in line and i + 6 < len(lines):
+            if my_name in line:
                 my_score = lines[i + 2].strip() if i + 2 < len(lines) else ''
                 opponent = lines[i + 3].strip() if i + 3 < len(lines) else ''
                 club_b = lines[i + 4].strip() if i + 4 < len(lines) else ''
