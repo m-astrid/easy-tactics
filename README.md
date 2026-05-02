@@ -16,7 +16,7 @@ Easy Tactics helps coaches and fighters analyze technique by:
 ```
 Bot (Go) ←────── gRPC ──────▶ API Service (Go)
                                   │
-                                  ▼ HTTP
+                                  ▼ gRPC
                             Python AI Service
                                   │
                                   ▼ HTTP
