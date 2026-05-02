@@ -4,7 +4,7 @@
 
 **Goal:** Создать MVP системы для анализа техники фехтовальщиков — API сервис + Telegram бот + Python AI Service с MCP
 
-**Architecture:** Docker-compose с 5 сервисами: Telegram Bot (thin wrapper), API Service (Go gRPC), Python AI Service, MCP серверы (Hemagon — свой, YouTube — готовый), SQLite
+**Architecture:** Docker-compose с 5 сервисами: Telegram Bot (thin wrapper), API Service (Go gRPC), Python AI Service, MCP серверы (Hemagon — свой, VK — свой), SQLite
 
 **Tech Stack:** Go (Fiber), Python (FastAPI), SQLite, Docker, Telegram Bot API, gRPC, MCP
 
@@ -20,7 +20,8 @@ easy-tactics/
 ├── python/
 │   ├── ai-service/         # Python AI Service
 │   └── mcp/
-│       └── hemagon/        # Hemagon MCP Server
+│       ├── hemagon/        # Hemagon MCP Server
+│       └── vk/             # VK Video MCP Server
 └── data/                   # SQLite volume
 ```
 
