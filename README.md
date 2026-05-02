@@ -1,4 +1,4 @@
-# Easy Tactics
+# ⚡ Easy Tactics
 
 AI-powered system for analyzing HEMA (Historical European Martial Arts) fencers.
 
