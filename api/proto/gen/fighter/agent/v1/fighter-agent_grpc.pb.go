@@ -563,3 +563,283 @@ var FighterService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "fighter-agent.proto",
 }
+
+const (
+	TournamentService_GetFighterTournaments_FullMethodName = "/fighter.agent.v1.TournamentService/GetFighterTournaments"
+	TournamentService_GetTournament_FullMethodName         = "/fighter.agent.v1.TournamentService/GetTournament"
+)
+
+// TournamentServiceClient is the client API for TournamentService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type TournamentServiceClient interface {
+	GetFighterTournaments(ctx context.Context, in *GetFighterTournamentsRequest, opts ...grpc.CallOption) (*TournamentList, error)
+	GetTournament(ctx context.Context, in *GetTournamentRequest, opts ...grpc.CallOption) (*Tournament, error)
+}
+
+type tournamentServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewTournamentServiceClient(cc grpc.ClientConnInterface) TournamentServiceClient {
+	return &tournamentServiceClient{cc}
+}
+
+func (c *tournamentServiceClient) GetFighterTournaments(ctx context.Context, in *GetFighterTournamentsRequest, opts ...grpc.CallOption) (*TournamentList, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TournamentList)
+	err := c.cc.Invoke(ctx, TournamentService_GetFighterTournaments_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tournamentServiceClient) GetTournament(ctx context.Context, in *GetTournamentRequest, opts ...grpc.CallOption) (*Tournament, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Tournament)
+	err := c.cc.Invoke(ctx, TournamentService_GetTournament_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// TournamentServiceServer is the server API for TournamentService service.
+// All implementations must embed UnimplementedTournamentServiceServer
+// for forward compatibility.
+type TournamentServiceServer interface {
+	GetFighterTournaments(context.Context, *GetFighterTournamentsRequest) (*TournamentList, error)
+	GetTournament(context.Context, *GetTournamentRequest) (*Tournament, error)
+	mustEmbedUnimplementedTournamentServiceServer()
+}
+
+// UnimplementedTournamentServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedTournamentServiceServer struct{}
+
+func (UnimplementedTournamentServiceServer) GetFighterTournaments(context.Context, *GetFighterTournamentsRequest) (*TournamentList, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetFighterTournaments not implemented")
+}
+func (UnimplementedTournamentServiceServer) GetTournament(context.Context, *GetTournamentRequest) (*Tournament, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTournament not implemented")
+}
+func (UnimplementedTournamentServiceServer) mustEmbedUnimplementedTournamentServiceServer() {}
+func (UnimplementedTournamentServiceServer) testEmbeddedByValue()                           {}
+
+// UnsafeTournamentServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TournamentServiceServer will
+// result in compilation errors.
+type UnsafeTournamentServiceServer interface {
+	mustEmbedUnimplementedTournamentServiceServer()
+}
+
+func RegisterTournamentServiceServer(s grpc.ServiceRegistrar, srv TournamentServiceServer) {
+	// If the following call panics, it indicates UnimplementedTournamentServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&TournamentService_ServiceDesc, srv)
+}
+
+func _TournamentService_GetFighterTournaments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFighterTournamentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TournamentServiceServer).GetFighterTournaments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TournamentService_GetFighterTournaments_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TournamentServiceServer).GetFighterTournaments(ctx, req.(*GetFighterTournamentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TournamentService_GetTournament_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTournamentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TournamentServiceServer).GetTournament(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TournamentService_GetTournament_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TournamentServiceServer).GetTournament(ctx, req.(*GetTournamentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// TournamentService_ServiceDesc is the grpc.ServiceDesc for TournamentService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var TournamentService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "fighter.agent.v1.TournamentService",
+	HandlerType: (*TournamentServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetFighterTournaments",
+			Handler:    _TournamentService_GetFighterTournaments_Handler,
+		},
+		{
+			MethodName: "GetTournament",
+			Handler:    _TournamentService_GetTournament_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "fighter-agent.proto",
+}
+
+const (
+	FightService_GetFighterFights_FullMethodName = "/fighter.agent.v1.FightService/GetFighterFights"
+	FightService_GetFight_FullMethodName         = "/fighter.agent.v1.FightService/GetFight"
+)
+
+// FightServiceClient is the client API for FightService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type FightServiceClient interface {
+	GetFighterFights(ctx context.Context, in *GetFighterFightsRequest, opts ...grpc.CallOption) (*FightList, error)
+	GetFight(ctx context.Context, in *GetFightRequest, opts ...grpc.CallOption) (*Fight, error)
+}
+
+type fightServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewFightServiceClient(cc grpc.ClientConnInterface) FightServiceClient {
+	return &fightServiceClient{cc}
+}
+
+func (c *fightServiceClient) GetFighterFights(ctx context.Context, in *GetFighterFightsRequest, opts ...grpc.CallOption) (*FightList, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(FightList)
+	err := c.cc.Invoke(ctx, FightService_GetFighterFights_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *fightServiceClient) GetFight(ctx context.Context, in *GetFightRequest, opts ...grpc.CallOption) (*Fight, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Fight)
+	err := c.cc.Invoke(ctx, FightService_GetFight_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// FightServiceServer is the server API for FightService service.
+// All implementations must embed UnimplementedFightServiceServer
+// for forward compatibility.
+type FightServiceServer interface {
+	GetFighterFights(context.Context, *GetFighterFightsRequest) (*FightList, error)
+	GetFight(context.Context, *GetFightRequest) (*Fight, error)
+	mustEmbedUnimplementedFightServiceServer()
+}
+
+// UnimplementedFightServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedFightServiceServer struct{}
+
+func (UnimplementedFightServiceServer) GetFighterFights(context.Context, *GetFighterFightsRequest) (*FightList, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetFighterFights not implemented")
+}
+func (UnimplementedFightServiceServer) GetFight(context.Context, *GetFightRequest) (*Fight, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetFight not implemented")
+}
+func (UnimplementedFightServiceServer) mustEmbedUnimplementedFightServiceServer() {}
+func (UnimplementedFightServiceServer) testEmbeddedByValue()                      {}
+
+// UnsafeFightServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to FightServiceServer will
+// result in compilation errors.
+type UnsafeFightServiceServer interface {
+	mustEmbedUnimplementedFightServiceServer()
+}
+
+func RegisterFightServiceServer(s grpc.ServiceRegistrar, srv FightServiceServer) {
+	// If the following call panics, it indicates UnimplementedFightServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&FightService_ServiceDesc, srv)
+}
+
+func _FightService_GetFighterFights_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFighterFightsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FightServiceServer).GetFighterFights(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FightService_GetFighterFights_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FightServiceServer).GetFighterFights(ctx, req.(*GetFighterFightsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FightService_GetFight_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFightRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FightServiceServer).GetFight(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FightService_GetFight_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FightServiceServer).GetFight(ctx, req.(*GetFightRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// FightService_ServiceDesc is the grpc.ServiceDesc for FightService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var FightService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "fighter.agent.v1.FightService",
+	HandlerType: (*FightServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetFighterFights",
+			Handler:    _FightService_GetFighterFights_Handler,
+		},
+		{
+			MethodName: "GetFight",
+			Handler:    _FightService_GetFight_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "fighter-agent.proto",
+}

@@ -1057,6 +1057,526 @@ func (x *ListFightersResponse) GetTotal() int32 {
 	return 0
 }
 
+type GetFighterTournamentsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FighterUuid   string                 `protobuf:"bytes,1,opt,name=fighter_uuid,json=fighterUuid,proto3" json:"fighter_uuid,omitempty"`
+	Limit         int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int32                  `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetFighterTournamentsRequest) Reset() {
+	*x = GetFighterTournamentsRequest{}
+	mi := &file_fighter_agent_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetFighterTournamentsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetFighterTournamentsRequest) ProtoMessage() {}
+
+func (x *GetFighterTournamentsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_fighter_agent_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetFighterTournamentsRequest.ProtoReflect.Descriptor instead.
+func (*GetFighterTournamentsRequest) Descriptor() ([]byte, []int) {
+	return file_fighter_agent_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *GetFighterTournamentsRequest) GetFighterUuid() string {
+	if x != nil {
+		return x.FighterUuid
+	}
+	return ""
+}
+
+func (x *GetFighterTournamentsRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *GetFighterTournamentsRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+type GetTournamentRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTournamentRequest) Reset() {
+	*x = GetTournamentRequest{}
+	mi := &file_fighter_agent_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTournamentRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTournamentRequest) ProtoMessage() {}
+
+func (x *GetTournamentRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_fighter_agent_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTournamentRequest.ProtoReflect.Descriptor instead.
+func (*GetTournamentRequest) Descriptor() ([]byte, []int) {
+	return file_fighter_agent_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GetTournamentRequest) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+type TournamentList struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Tournaments   []*Tournament          `protobuf:"bytes,1,rep,name=tournaments,proto3" json:"tournaments,omitempty"`
+	Total         int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TournamentList) Reset() {
+	*x = TournamentList{}
+	mi := &file_fighter_agent_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TournamentList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TournamentList) ProtoMessage() {}
+
+func (x *TournamentList) ProtoReflect() protoreflect.Message {
+	mi := &file_fighter_agent_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TournamentList.ProtoReflect.Descriptor instead.
+func (*TournamentList) Descriptor() ([]byte, []int) {
+	return file_fighter_agent_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *TournamentList) GetTournaments() []*Tournament {
+	if x != nil {
+		return x.Tournaments
+	}
+	return nil
+}
+
+func (x *TournamentList) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+type Tournament struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	FighterUuid   string                 `protobuf:"bytes,2,opt,name=fighter_uuid,json=fighterUuid,proto3" json:"fighter_uuid,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	City          string                 `protobuf:"bytes,4,opt,name=city,proto3" json:"city,omitempty"`
+	Country       string                 `protobuf:"bytes,5,opt,name=country,proto3" json:"country,omitempty"`
+	StartDate     string                 `protobuf:"bytes,6,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
+	HemagonUrl    string                 `protobuf:"bytes,7,opt,name=hemagon_url,json=hemagonUrl,proto3" json:"hemagon_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Tournament) Reset() {
+	*x = Tournament{}
+	mi := &file_fighter_agent_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Tournament) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Tournament) ProtoMessage() {}
+
+func (x *Tournament) ProtoReflect() protoreflect.Message {
+	mi := &file_fighter_agent_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Tournament.ProtoReflect.Descriptor instead.
+func (*Tournament) Descriptor() ([]byte, []int) {
+	return file_fighter_agent_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *Tournament) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+func (x *Tournament) GetFighterUuid() string {
+	if x != nil {
+		return x.FighterUuid
+	}
+	return ""
+}
+
+func (x *Tournament) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Tournament) GetCity() string {
+	if x != nil {
+		return x.City
+	}
+	return ""
+}
+
+func (x *Tournament) GetCountry() string {
+	if x != nil {
+		return x.Country
+	}
+	return ""
+}
+
+func (x *Tournament) GetStartDate() string {
+	if x != nil {
+		return x.StartDate
+	}
+	return ""
+}
+
+func (x *Tournament) GetHemagonUrl() string {
+	if x != nil {
+		return x.HemagonUrl
+	}
+	return ""
+}
+
+type GetFighterFightsRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	FighterUuid    string                 `protobuf:"bytes,1,opt,name=fighter_uuid,json=fighterUuid,proto3" json:"fighter_uuid,omitempty"`
+	TournamentUuid string                 `protobuf:"bytes,2,opt,name=tournament_uuid,json=tournamentUuid,proto3" json:"tournament_uuid,omitempty"`
+	Limit          int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset         int32                  `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *GetFighterFightsRequest) Reset() {
+	*x = GetFighterFightsRequest{}
+	mi := &file_fighter_agent_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetFighterFightsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetFighterFightsRequest) ProtoMessage() {}
+
+func (x *GetFighterFightsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_fighter_agent_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetFighterFightsRequest.ProtoReflect.Descriptor instead.
+func (*GetFighterFightsRequest) Descriptor() ([]byte, []int) {
+	return file_fighter_agent_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *GetFighterFightsRequest) GetFighterUuid() string {
+	if x != nil {
+		return x.FighterUuid
+	}
+	return ""
+}
+
+func (x *GetFighterFightsRequest) GetTournamentUuid() string {
+	if x != nil {
+		return x.TournamentUuid
+	}
+	return ""
+}
+
+func (x *GetFighterFightsRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *GetFighterFightsRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+type GetFightRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetFightRequest) Reset() {
+	*x = GetFightRequest{}
+	mi := &file_fighter_agent_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetFightRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetFightRequest) ProtoMessage() {}
+
+func (x *GetFightRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_fighter_agent_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetFightRequest.ProtoReflect.Descriptor instead.
+func (*GetFightRequest) Descriptor() ([]byte, []int) {
+	return file_fighter_agent_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *GetFightRequest) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+type FightList struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Fights        []*Fight               `protobuf:"bytes,1,rep,name=fights,proto3" json:"fights,omitempty"`
+	Total         int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FightList) Reset() {
+	*x = FightList{}
+	mi := &file_fighter_agent_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FightList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FightList) ProtoMessage() {}
+
+func (x *FightList) ProtoReflect() protoreflect.Message {
+	mi := &file_fighter_agent_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FightList.ProtoReflect.Descriptor instead.
+func (*FightList) Descriptor() ([]byte, []int) {
+	return file_fighter_agent_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *FightList) GetFights() []*Fight {
+	if x != nil {
+		return x.Fights
+	}
+	return nil
+}
+
+func (x *FightList) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+type Fight struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Uuid           string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	FighterUuid    string                 `protobuf:"bytes,2,opt,name=fighter_uuid,json=fighterUuid,proto3" json:"fighter_uuid,omitempty"`
+	TournamentUuid string                 `protobuf:"bytes,3,opt,name=tournament_uuid,json=tournamentUuid,proto3" json:"tournament_uuid,omitempty"`
+	OpponentUuid   string                 `protobuf:"bytes,4,opt,name=opponent_uuid,json=opponentUuid,proto3" json:"opponent_uuid,omitempty"`
+	OpponentName   string                 `protobuf:"bytes,5,opt,name=opponent_name,json=opponentName,proto3" json:"opponent_name,omitempty"`
+	ScoreWin       int32                  `protobuf:"varint,6,opt,name=score_win,json=scoreWin,proto3" json:"score_win,omitempty"`
+	ScoreLose      int32                  `protobuf:"varint,7,opt,name=score_lose,json=scoreLose,proto3" json:"score_lose,omitempty"`
+	Round          string                 `protobuf:"bytes,8,opt,name=round,proto3" json:"round,omitempty"`
+	FightDate      string                 `protobuf:"bytes,9,opt,name=fight_date,json=fightDate,proto3" json:"fight_date,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *Fight) Reset() {
+	*x = Fight{}
+	mi := &file_fighter_agent_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Fight) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Fight) ProtoMessage() {}
+
+func (x *Fight) ProtoReflect() protoreflect.Message {
+	mi := &file_fighter_agent_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Fight.ProtoReflect.Descriptor instead.
+func (*Fight) Descriptor() ([]byte, []int) {
+	return file_fighter_agent_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *Fight) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+func (x *Fight) GetFighterUuid() string {
+	if x != nil {
+		return x.FighterUuid
+	}
+	return ""
+}
+
+func (x *Fight) GetTournamentUuid() string {
+	if x != nil {
+		return x.TournamentUuid
+	}
+	return ""
+}
+
+func (x *Fight) GetOpponentUuid() string {
+	if x != nil {
+		return x.OpponentUuid
+	}
+	return ""
+}
+
+func (x *Fight) GetOpponentName() string {
+	if x != nil {
+		return x.OpponentName
+	}
+	return ""
+}
+
+func (x *Fight) GetScoreWin() int32 {
+	if x != nil {
+		return x.ScoreWin
+	}
+	return 0
+}
+
+func (x *Fight) GetScoreLose() int32 {
+	if x != nil {
+		return x.ScoreLose
+	}
+	return 0
+}
+
+func (x *Fight) GetRound() string {
+	if x != nil {
+		return x.Round
+	}
+	return ""
+}
+
+func (x *Fight) GetFightDate() string {
+	if x != nil {
+		return x.FightDate
+	}
+	return ""
+}
+
 type Fighter struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
@@ -1076,7 +1596,7 @@ type Fighter struct {
 
 func (x *Fighter) Reset() {
 	*x = Fighter{}
-	mi := &file_fighter_agent_proto_msgTypes[16]
+	mi := &file_fighter_agent_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1088,7 +1608,7 @@ func (x *Fighter) String() string {
 func (*Fighter) ProtoMessage() {}
 
 func (x *Fighter) ProtoReflect() protoreflect.Message {
-	mi := &file_fighter_agent_proto_msgTypes[16]
+	mi := &file_fighter_agent_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1101,7 +1621,7 @@ func (x *Fighter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Fighter.ProtoReflect.Descriptor instead.
 func (*Fighter) Descriptor() ([]byte, []int) {
-	return file_fighter_agent_proto_rawDescGZIP(), []int{16}
+	return file_fighter_agent_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *Fighter) GetUuid() string {
@@ -1192,7 +1712,7 @@ type FighterPhoto struct {
 
 func (x *FighterPhoto) Reset() {
 	*x = FighterPhoto{}
-	mi := &file_fighter_agent_proto_msgTypes[17]
+	mi := &file_fighter_agent_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1204,7 +1724,7 @@ func (x *FighterPhoto) String() string {
 func (*FighterPhoto) ProtoMessage() {}
 
 func (x *FighterPhoto) ProtoReflect() protoreflect.Message {
-	mi := &file_fighter_agent_proto_msgTypes[17]
+	mi := &file_fighter_agent_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1217,7 +1737,7 @@ func (x *FighterPhoto) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FighterPhoto.ProtoReflect.Descriptor instead.
 func (*FighterPhoto) Descriptor() ([]byte, []int) {
-	return file_fighter_agent_proto_rawDescGZIP(), []int{17}
+	return file_fighter_agent_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *FighterPhoto) GetUrl() string {
@@ -1252,7 +1772,7 @@ type Summary struct {
 
 func (x *Summary) Reset() {
 	*x = Summary{}
-	mi := &file_fighter_agent_proto_msgTypes[18]
+	mi := &file_fighter_agent_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1264,7 +1784,7 @@ func (x *Summary) String() string {
 func (*Summary) ProtoMessage() {}
 
 func (x *Summary) ProtoReflect() protoreflect.Message {
-	mi := &file_fighter_agent_proto_msgTypes[18]
+	mi := &file_fighter_agent_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1277,7 +1797,7 @@ func (x *Summary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Summary.ProtoReflect.Descriptor instead.
 func (*Summary) Descriptor() ([]byte, []int) {
-	return file_fighter_agent_proto_rawDescGZIP(), []int{18}
+	return file_fighter_agent_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *Summary) GetContent() string {
@@ -1309,7 +1829,7 @@ type Empty struct {
 
 func (x *Empty) Reset() {
 	*x = Empty{}
-	mi := &file_fighter_agent_proto_msgTypes[19]
+	mi := &file_fighter_agent_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1321,7 +1841,7 @@ func (x *Empty) String() string {
 func (*Empty) ProtoMessage() {}
 
 func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_fighter_agent_proto_msgTypes[19]
+	mi := &file_fighter_agent_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1334,7 +1854,7 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
-	return file_fighter_agent_proto_rawDescGZIP(), []int{19}
+	return file_fighter_agent_proto_rawDescGZIP(), []int{27}
 }
 
 type SearchFighterResponse_FighterMatch struct {
@@ -1354,7 +1874,7 @@ type SearchFighterResponse_FighterMatch struct {
 
 func (x *SearchFighterResponse_FighterMatch) Reset() {
 	*x = SearchFighterResponse_FighterMatch{}
-	mi := &file_fighter_agent_proto_msgTypes[20]
+	mi := &file_fighter_agent_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1366,7 +1886,7 @@ func (x *SearchFighterResponse_FighterMatch) String() string {
 func (*SearchFighterResponse_FighterMatch) ProtoMessage() {}
 
 func (x *SearchFighterResponse_FighterMatch) ProtoReflect() protoreflect.Message {
-	mi := &file_fighter_agent_proto_msgTypes[20]
+	mi := &file_fighter_agent_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1542,7 +2062,49 @@ const file_fighter_agent_proto_rawDesc = "" +
 	"tag_filter\x18\x03 \x01(\tR\ttagFilter\"c\n" +
 	"\x14ListFightersResponse\x125\n" +
 	"\bfighters\x18\x01 \x03(\v2\x19.fighter.agent.v1.FighterR\bfighters\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total\"\x9b\x03\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"o\n" +
+	"\x1cGetFighterTournamentsRequest\x12!\n" +
+	"\ffighter_uuid\x18\x01 \x01(\tR\vfighterUuid\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x03 \x01(\x05R\x06offset\"*\n" +
+	"\x14GetTournamentRequest\x12\x12\n" +
+	"\x04uuid\x18\x01 \x01(\tR\x04uuid\"f\n" +
+	"\x0eTournamentList\x12>\n" +
+	"\vtournaments\x18\x01 \x03(\v2\x1c.fighter.agent.v1.TournamentR\vtournaments\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\xc5\x01\n" +
+	"\n" +
+	"Tournament\x12\x12\n" +
+	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12!\n" +
+	"\ffighter_uuid\x18\x02 \x01(\tR\vfighterUuid\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
+	"\x04city\x18\x04 \x01(\tR\x04city\x12\x18\n" +
+	"\acountry\x18\x05 \x01(\tR\acountry\x12\x1d\n" +
+	"\n" +
+	"start_date\x18\x06 \x01(\tR\tstartDate\x12\x1f\n" +
+	"\vhemagon_url\x18\a \x01(\tR\n" +
+	"hemagonUrl\"\x93\x01\n" +
+	"\x17GetFighterFightsRequest\x12!\n" +
+	"\ffighter_uuid\x18\x01 \x01(\tR\vfighterUuid\x12'\n" +
+	"\x0ftournament_uuid\x18\x02 \x01(\tR\x0etournamentUuid\x12\x14\n" +
+	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x04 \x01(\x05R\x06offset\"%\n" +
+	"\x0fGetFightRequest\x12\x12\n" +
+	"\x04uuid\x18\x01 \x01(\tR\x04uuid\"R\n" +
+	"\tFightList\x12/\n" +
+	"\x06fights\x18\x01 \x03(\v2\x17.fighter.agent.v1.FightR\x06fights\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\xa2\x02\n" +
+	"\x05Fight\x12\x12\n" +
+	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12!\n" +
+	"\ffighter_uuid\x18\x02 \x01(\tR\vfighterUuid\x12'\n" +
+	"\x0ftournament_uuid\x18\x03 \x01(\tR\x0etournamentUuid\x12#\n" +
+	"\ropponent_uuid\x18\x04 \x01(\tR\fopponentUuid\x12#\n" +
+	"\ropponent_name\x18\x05 \x01(\tR\fopponentName\x12\x1b\n" +
+	"\tscore_win\x18\x06 \x01(\x05R\bscoreWin\x12\x1d\n" +
+	"\n" +
+	"score_lose\x18\a \x01(\x05R\tscoreLose\x12\x14\n" +
+	"\x05round\x18\b \x01(\tR\x05round\x12\x1d\n" +
+	"\n" +
+	"fight_date\x18\t \x01(\tR\tfightDate\"\x9b\x03\n" +
 	"\aFighter\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04slug\x18\x02 \x01(\tR\x04slug\x12\x1b\n" +
@@ -1583,7 +2145,13 @@ const file_fighter_agent_proto_rawDesc = "" +
 	"GetFighter\x12#.fighter.agent.v1.GetFighterRequest\x1a\x19.fighter.agent.v1.Fighter\x12R\n" +
 	"\rCreateFighter\x12&.fighter.agent.v1.CreateFighterRequest\x1a\x19.fighter.agent.v1.Fighter\x12R\n" +
 	"\rUpdateFighter\x12&.fighter.agent.v1.UpdateFighterRequest\x1a\x19.fighter.agent.v1.Fighter\x12]\n" +
-	"\fListFighters\x12%.fighter.agent.v1.ListFightersRequest\x1a&.fighter.agent.v1.ListFightersResponseB?Z=github.com/easy-tactics/api/proto/gen/fighter/agent/v1;fapiv1b\x06proto3"
+	"\fListFighters\x12%.fighter.agent.v1.ListFightersRequest\x1a&.fighter.agent.v1.ListFightersResponse2\xd5\x01\n" +
+	"\x11TournamentService\x12i\n" +
+	"\x15GetFighterTournaments\x12..fighter.agent.v1.GetFighterTournamentsRequest\x1a .fighter.agent.v1.TournamentList\x12U\n" +
+	"\rGetTournament\x12&.fighter.agent.v1.GetTournamentRequest\x1a\x1c.fighter.agent.v1.Tournament2\xb2\x01\n" +
+	"\fFightService\x12Z\n" +
+	"\x10GetFighterFights\x12).fighter.agent.v1.GetFighterFightsRequest\x1a\x1b.fighter.agent.v1.FightList\x12F\n" +
+	"\bGetFight\x12!.fighter.agent.v1.GetFightRequest\x1a\x17.fighter.agent.v1.FightB?Z=github.com/easy-tactics/api/proto/gen/fighter/agent/v1;fapiv1b\x06proto3"
 
 var (
 	file_fighter_agent_proto_rawDescOnce sync.Once
@@ -1598,7 +2166,7 @@ func file_fighter_agent_proto_rawDescGZIP() []byte {
 }
 
 var file_fighter_agent_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_fighter_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
+var file_fighter_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 29)
 var file_fighter_agent_proto_goTypes = []any{
 	(SearchFighterResponse_Source)(0),          // 0: fighter.agent.v1.SearchFighterResponse.Source
 	(*AddUserRequest)(nil),                     // 1: fighter.agent.v1.AddUserRequest
@@ -1617,55 +2185,73 @@ var file_fighter_agent_proto_goTypes = []any{
 	(*UpdateFighterRequest)(nil),               // 14: fighter.agent.v1.UpdateFighterRequest
 	(*ListFightersRequest)(nil),                // 15: fighter.agent.v1.ListFightersRequest
 	(*ListFightersResponse)(nil),               // 16: fighter.agent.v1.ListFightersResponse
-	(*Fighter)(nil),                            // 17: fighter.agent.v1.Fighter
-	(*FighterPhoto)(nil),                       // 18: fighter.agent.v1.FighterPhoto
-	(*Summary)(nil),                            // 19: fighter.agent.v1.Summary
-	(*Empty)(nil),                              // 20: fighter.agent.v1.Empty
-	(*SearchFighterResponse_FighterMatch)(nil), // 21: fighter.agent.v1.SearchFighterResponse.FighterMatch
-	(*timestamppb.Timestamp)(nil),              // 22: google.protobuf.Timestamp
+	(*GetFighterTournamentsRequest)(nil),       // 17: fighter.agent.v1.GetFighterTournamentsRequest
+	(*GetTournamentRequest)(nil),               // 18: fighter.agent.v1.GetTournamentRequest
+	(*TournamentList)(nil),                     // 19: fighter.agent.v1.TournamentList
+	(*Tournament)(nil),                         // 20: fighter.agent.v1.Tournament
+	(*GetFighterFightsRequest)(nil),            // 21: fighter.agent.v1.GetFighterFightsRequest
+	(*GetFightRequest)(nil),                    // 22: fighter.agent.v1.GetFightRequest
+	(*FightList)(nil),                          // 23: fighter.agent.v1.FightList
+	(*Fight)(nil),                              // 24: fighter.agent.v1.Fight
+	(*Fighter)(nil),                            // 25: fighter.agent.v1.Fighter
+	(*FighterPhoto)(nil),                       // 26: fighter.agent.v1.FighterPhoto
+	(*Summary)(nil),                            // 27: fighter.agent.v1.Summary
+	(*Empty)(nil),                              // 28: fighter.agent.v1.Empty
+	(*SearchFighterResponse_FighterMatch)(nil), // 29: fighter.agent.v1.SearchFighterResponse.FighterMatch
+	(*timestamppb.Timestamp)(nil),              // 30: google.protobuf.Timestamp
 }
 var file_fighter_agent_proto_depIdxs = []int32{
-	22, // 0: fighter.agent.v1.User.created_at:type_name -> google.protobuf.Timestamp
-	22, // 1: fighter.agent.v1.User.updated_at:type_name -> google.protobuf.Timestamp
+	30, // 0: fighter.agent.v1.User.created_at:type_name -> google.protobuf.Timestamp
+	30, // 1: fighter.agent.v1.User.updated_at:type_name -> google.protobuf.Timestamp
 	8,  // 2: fighter.agent.v1.UserList.users:type_name -> fighter.agent.v1.User
 	0,  // 3: fighter.agent.v1.SearchFighterResponse.source:type_name -> fighter.agent.v1.SearchFighterResponse.Source
-	21, // 4: fighter.agent.v1.SearchFighterResponse.matches:type_name -> fighter.agent.v1.SearchFighterResponse.FighterMatch
-	21, // 5: fighter.agent.v1.SearchFighterResponse.selected:type_name -> fighter.agent.v1.SearchFighterResponse.FighterMatch
-	17, // 6: fighter.agent.v1.ListFightersResponse.fighters:type_name -> fighter.agent.v1.Fighter
-	18, // 7: fighter.agent.v1.Fighter.photos:type_name -> fighter.agent.v1.FighterPhoto
-	22, // 8: fighter.agent.v1.Fighter.created_at:type_name -> google.protobuf.Timestamp
-	22, // 9: fighter.agent.v1.Fighter.updated_at:type_name -> google.protobuf.Timestamp
-	19, // 10: fighter.agent.v1.Fighter.latest_summary:type_name -> fighter.agent.v1.Summary
-	22, // 11: fighter.agent.v1.FighterPhoto.taken_at:type_name -> google.protobuf.Timestamp
-	22, // 12: fighter.agent.v1.Summary.updated_at:type_name -> google.protobuf.Timestamp
-	22, // 13: fighter.agent.v1.SearchFighterResponse.FighterMatch.last_updated:type_name -> google.protobuf.Timestamp
-	1,  // 14: fighter.agent.v1.AuthService.AddUser:input_type -> fighter.agent.v1.AddUserRequest
-	2,  // 15: fighter.agent.v1.AuthService.RemoveUser:input_type -> fighter.agent.v1.RemoveUserRequest
-	3,  // 16: fighter.agent.v1.AuthService.GetUser:input_type -> fighter.agent.v1.GetUserRequest
-	4,  // 17: fighter.agent.v1.AuthService.ListUsers:input_type -> fighter.agent.v1.ListUsersRequest
-	5,  // 18: fighter.agent.v1.AuthService.UpdateUserRole:input_type -> fighter.agent.v1.UpdateUserRoleRequest
-	6,  // 19: fighter.agent.v1.AuthService.CheckAccess:input_type -> fighter.agent.v1.CheckAccessRequest
-	10, // 20: fighter.agent.v1.FighterService.SearchFighter:input_type -> fighter.agent.v1.SearchFighterRequest
-	12, // 21: fighter.agent.v1.FighterService.GetFighter:input_type -> fighter.agent.v1.GetFighterRequest
-	13, // 22: fighter.agent.v1.FighterService.CreateFighter:input_type -> fighter.agent.v1.CreateFighterRequest
-	14, // 23: fighter.agent.v1.FighterService.UpdateFighter:input_type -> fighter.agent.v1.UpdateFighterRequest
-	15, // 24: fighter.agent.v1.FighterService.ListFighters:input_type -> fighter.agent.v1.ListFightersRequest
-	8,  // 25: fighter.agent.v1.AuthService.AddUser:output_type -> fighter.agent.v1.User
-	20, // 26: fighter.agent.v1.AuthService.RemoveUser:output_type -> fighter.agent.v1.Empty
-	8,  // 27: fighter.agent.v1.AuthService.GetUser:output_type -> fighter.agent.v1.User
-	9,  // 28: fighter.agent.v1.AuthService.ListUsers:output_type -> fighter.agent.v1.UserList
-	8,  // 29: fighter.agent.v1.AuthService.UpdateUserRole:output_type -> fighter.agent.v1.User
-	7,  // 30: fighter.agent.v1.AuthService.CheckAccess:output_type -> fighter.agent.v1.AccessResponse
-	11, // 31: fighter.agent.v1.FighterService.SearchFighter:output_type -> fighter.agent.v1.SearchFighterResponse
-	17, // 32: fighter.agent.v1.FighterService.GetFighter:output_type -> fighter.agent.v1.Fighter
-	17, // 33: fighter.agent.v1.FighterService.CreateFighter:output_type -> fighter.agent.v1.Fighter
-	17, // 34: fighter.agent.v1.FighterService.UpdateFighter:output_type -> fighter.agent.v1.Fighter
-	16, // 35: fighter.agent.v1.FighterService.ListFighters:output_type -> fighter.agent.v1.ListFightersResponse
-	25, // [25:36] is the sub-list for method output_type
-	14, // [14:25] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	29, // 4: fighter.agent.v1.SearchFighterResponse.matches:type_name -> fighter.agent.v1.SearchFighterResponse.FighterMatch
+	29, // 5: fighter.agent.v1.SearchFighterResponse.selected:type_name -> fighter.agent.v1.SearchFighterResponse.FighterMatch
+	25, // 6: fighter.agent.v1.ListFightersResponse.fighters:type_name -> fighter.agent.v1.Fighter
+	20, // 7: fighter.agent.v1.TournamentList.tournaments:type_name -> fighter.agent.v1.Tournament
+	24, // 8: fighter.agent.v1.FightList.fights:type_name -> fighter.agent.v1.Fight
+	26, // 9: fighter.agent.v1.Fighter.photos:type_name -> fighter.agent.v1.FighterPhoto
+	30, // 10: fighter.agent.v1.Fighter.created_at:type_name -> google.protobuf.Timestamp
+	30, // 11: fighter.agent.v1.Fighter.updated_at:type_name -> google.protobuf.Timestamp
+	27, // 12: fighter.agent.v1.Fighter.latest_summary:type_name -> fighter.agent.v1.Summary
+	30, // 13: fighter.agent.v1.FighterPhoto.taken_at:type_name -> google.protobuf.Timestamp
+	30, // 14: fighter.agent.v1.Summary.updated_at:type_name -> google.protobuf.Timestamp
+	30, // 15: fighter.agent.v1.SearchFighterResponse.FighterMatch.last_updated:type_name -> google.protobuf.Timestamp
+	1,  // 16: fighter.agent.v1.AuthService.AddUser:input_type -> fighter.agent.v1.AddUserRequest
+	2,  // 17: fighter.agent.v1.AuthService.RemoveUser:input_type -> fighter.agent.v1.RemoveUserRequest
+	3,  // 18: fighter.agent.v1.AuthService.GetUser:input_type -> fighter.agent.v1.GetUserRequest
+	4,  // 19: fighter.agent.v1.AuthService.ListUsers:input_type -> fighter.agent.v1.ListUsersRequest
+	5,  // 20: fighter.agent.v1.AuthService.UpdateUserRole:input_type -> fighter.agent.v1.UpdateUserRoleRequest
+	6,  // 21: fighter.agent.v1.AuthService.CheckAccess:input_type -> fighter.agent.v1.CheckAccessRequest
+	10, // 22: fighter.agent.v1.FighterService.SearchFighter:input_type -> fighter.agent.v1.SearchFighterRequest
+	12, // 23: fighter.agent.v1.FighterService.GetFighter:input_type -> fighter.agent.v1.GetFighterRequest
+	13, // 24: fighter.agent.v1.FighterService.CreateFighter:input_type -> fighter.agent.v1.CreateFighterRequest
+	14, // 25: fighter.agent.v1.FighterService.UpdateFighter:input_type -> fighter.agent.v1.UpdateFighterRequest
+	15, // 26: fighter.agent.v1.FighterService.ListFighters:input_type -> fighter.agent.v1.ListFightersRequest
+	17, // 27: fighter.agent.v1.TournamentService.GetFighterTournaments:input_type -> fighter.agent.v1.GetFighterTournamentsRequest
+	18, // 28: fighter.agent.v1.TournamentService.GetTournament:input_type -> fighter.agent.v1.GetTournamentRequest
+	21, // 29: fighter.agent.v1.FightService.GetFighterFights:input_type -> fighter.agent.v1.GetFighterFightsRequest
+	22, // 30: fighter.agent.v1.FightService.GetFight:input_type -> fighter.agent.v1.GetFightRequest
+	8,  // 31: fighter.agent.v1.AuthService.AddUser:output_type -> fighter.agent.v1.User
+	28, // 32: fighter.agent.v1.AuthService.RemoveUser:output_type -> fighter.agent.v1.Empty
+	8,  // 33: fighter.agent.v1.AuthService.GetUser:output_type -> fighter.agent.v1.User
+	9,  // 34: fighter.agent.v1.AuthService.ListUsers:output_type -> fighter.agent.v1.UserList
+	8,  // 35: fighter.agent.v1.AuthService.UpdateUserRole:output_type -> fighter.agent.v1.User
+	7,  // 36: fighter.agent.v1.AuthService.CheckAccess:output_type -> fighter.agent.v1.AccessResponse
+	11, // 37: fighter.agent.v1.FighterService.SearchFighter:output_type -> fighter.agent.v1.SearchFighterResponse
+	25, // 38: fighter.agent.v1.FighterService.GetFighter:output_type -> fighter.agent.v1.Fighter
+	25, // 39: fighter.agent.v1.FighterService.CreateFighter:output_type -> fighter.agent.v1.Fighter
+	25, // 40: fighter.agent.v1.FighterService.UpdateFighter:output_type -> fighter.agent.v1.Fighter
+	16, // 41: fighter.agent.v1.FighterService.ListFighters:output_type -> fighter.agent.v1.ListFightersResponse
+	19, // 42: fighter.agent.v1.TournamentService.GetFighterTournaments:output_type -> fighter.agent.v1.TournamentList
+	20, // 43: fighter.agent.v1.TournamentService.GetTournament:output_type -> fighter.agent.v1.Tournament
+	23, // 44: fighter.agent.v1.FightService.GetFighterFights:output_type -> fighter.agent.v1.FightList
+	24, // 45: fighter.agent.v1.FightService.GetFight:output_type -> fighter.agent.v1.Fight
+	31, // [31:46] is the sub-list for method output_type
+	16, // [16:31] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_fighter_agent_proto_init() }
@@ -1683,9 +2269,9 @@ func file_fighter_agent_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_fighter_agent_proto_rawDesc), len(file_fighter_agent_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   21,
+			NumMessages:   29,
 			NumExtensions: 0,
-			NumServices:   2,
+			NumServices:   4,
 		},
 		GoTypes:           file_fighter_agent_proto_goTypes,
 		DependencyIndexes: file_fighter_agent_proto_depIdxs,

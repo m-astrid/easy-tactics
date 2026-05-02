@@ -149,6 +149,77 @@ message ListFightersResponse {
 }
 
 // ============================================================================
+// Tournament Service
+// ============================================================================
+
+service TournamentService {
+  rpc GetFighterTournaments(GetFighterTournamentsRequest) returns (TournamentList);
+  rpc GetTournament(GetTournamentRequest) returns (Tournament);
+}
+
+message GetFighterTournamentsRequest {
+  string fighter_uuid = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message GetTournamentRequest {
+  string uuid = 1;
+}
+
+message TournamentList {
+  repeated Tournament tournaments = 1;
+  int32 total = 2;
+}
+
+message Tournament {
+  string uuid = 1;
+  string fighter_uuid = 2;
+  string name = 3;
+  string city = 4;
+  string country = 5;
+  string start_date = 6;
+  string hemagon_url = 7;
+}
+
+// ============================================================================
+// Fight Service
+// ============================================================================
+
+service FightService {
+  rpc GetFighterFights(GetFighterFightsRequest) returns (FightList);
+  rpc GetFight(GetFightRequest) returns (Fight);
+}
+
+message GetFighterFightsRequest {
+  string fighter_uuid = 1;
+  string tournament_uuid = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+}
+
+message GetFightRequest {
+  string uuid = 1;
+}
+
+message FightList {
+  repeated Fight fights = 1;
+  int32 total = 2;
+}
+
+message Fight {
+  string uuid = 1;
+  string fighter_uuid = 2;
+  string tournament_uuid = 3;
+  string opponent_uuid = 4;
+  string opponent_name = 5;
+  int32 score_win = 6;
+  int32 score_lose = 7;
+  string round = 8;
+  string fight_date = 9;
+}
+
+// ============================================================================
 // Common Messages
 // ============================================================================
 
