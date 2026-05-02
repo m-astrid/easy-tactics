@@ -3,12 +3,15 @@ package handlers
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
 	fapiv1 "github.com/easy-tactics/api/proto/gen/fighter/agent/v1"
 )
+
+const defaultTimeout = 5 * time.Second
 
 type APIClient struct {
 	conn          *grpc.ClientConn
@@ -33,7 +36,13 @@ func (c *APIClient) Close() error {
 	return c.conn.Close()
 }
 
+func withTimeout(ctx context.Context) (context.Context, context.CancelFunc) {
+	return context.WithTimeout(ctx, defaultTimeout)
+}
+
 func (c *APIClient) CheckAccess(ctx context.Context, telegramID int64, requiredRole string) (bool, string, error) {
+	ctx, cancel := withTimeout(ctx)
+	defer cancel()
 	resp, err := c.authClient.CheckAccess(ctx, &fapiv1.CheckAccessRequest{
 		TelegramId:   telegramID,
 		RequiredRole: requiredRole,

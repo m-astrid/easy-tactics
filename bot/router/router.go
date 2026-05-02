@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 
 	"github.com/easy-tactics/bot/handlers"
 	"github.com/easy-tactics/bot/middleware"
@@ -55,7 +57,7 @@ func (r *Router) handleCommand(ctx context.Context, msg *tgbotapi.Message) {
 	case "users":
 		r.handleUsers(ctx, msg, role)
 	case "adduser":
-		r.handleAddUser(msg, role)
+		r.handleAddUser(ctx, msg, role, args)
 	default:
 		r.sendMessage(msg.Chat.ID, "Неизвестная команда. Используй /help")
 	}
@@ -194,13 +196,51 @@ func (r *Router) handleUsers(ctx context.Context, msg *tgbotapi.Message, role st
 	r.sendMarkdown(msg.Chat.ID, text)
 }
 
-func (r *Router) handleAddUser(msg *tgbotapi.Message, role string) {
+func (r *Router) handleAddUser(ctx context.Context, msg *tgbotapi.Message, role string, args string) {
 	if role != "owner" && role != "admin" {
 		r.sendMessage(msg.Chat.ID, "Нет доступа")
 		return
 	}
 
-	r.sendMessage(msg.Chat.ID, "Формат: /adduser [telegram_id] [username] [role]")
+	if args == "" {
+		r.sendMessage(msg.Chat.ID, "Формат: /adduser [telegram_id] [username] [full_name] [role]\nПример: /adduser 12345678 john John Doe fighter")
+		return
+	}
+
+	parts := strings.Fields(args)
+	if len(parts) < 4 {
+		r.sendMessage(msg.Chat.ID, "Недостаточно аргументов.\nФормат: /adduser [telegram_id] [username] [full_name] [role]")
+		return
+	}
+
+	telegramID, err := strconv.ParseInt(parts[0], 10, 64)
+	if err != nil {
+		r.sendMessage(msg.Chat.ID, "Неверный telegram_id")
+		return
+	}
+
+	username := parts[1]
+	fullName := parts[2]
+	userRole := parts[3]
+
+	validRoles := map[string]bool{"owner": true, "admin": true, "coach": true, "fighter": true}
+	if !validRoles[userRole] {
+		r.sendMessage(msg.Chat.ID, "Неверная роль. Используй: owner, admin, coach, fighter")
+		return
+	}
+
+	if r.api == nil {
+		r.sendMessage(msg.Chat.ID, "API недоступен")
+		return
+	}
+
+	err = r.api.AddUser(ctx, telegramID, username, fullName, userRole)
+	if err != nil {
+		r.sendMessage(msg.Chat.ID, fmt.Sprintf("Ошибка: %v", err))
+		return
+	}
+
+	r.sendMessage(msg.Chat.ID, fmt.Sprintf("Пользователь %s добавлен с ролью %s", username, userRole))
 }
 
 func (r *Router) sendMessage(chatID int64, text string) {
