@@ -3,7 +3,7 @@ HEMAGON FastAPI Server
 """
 from fastapi import FastAPI
 from pydantic import BaseModel
-from scraper import load_user_profile_async
+from app.parse_user_profile import load_user_profile_async
 
 app = FastAPI(title="HEMAGON API")
 

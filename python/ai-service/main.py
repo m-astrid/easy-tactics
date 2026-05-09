@@ -8,53 +8,54 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from app.load_user_data import load_and_analyze_sync
 from app.read_user_data import analyze_user_data_sync
+from store import init_db, get_profile
 
 app = FastAPI(title="HEMAGON AI Service")
 
-HEMAGON_API_URL = os.getenv("HEMAGON_API_URL", "http://localhost:8000")
+HEMAGON_SCRAPPER_URL = os.getenv("HEMAGON_SCRAPPER_URL", "http://localhost:8000")
 
 
 class WeaponSchema(BaseModel):
     name: str
-    rank: int | None = None
-    rating: int | None = None
-    events: int | None = None
-    fights: int | None = None
-    win_percent: int | None = None
+    rank: Optional[int] = None
+    rating: Optional[int] = None
+    events: Optional[int] = None
+    fights: Optional[int] = None
+    win_percent: Optional[int] = None
 
 
 class FightSchema(BaseModel):
     opponent: str
-    club: str | None = None
+    club: Optional[str] = None
     user_score: int
     opponent_score: int
     result: str
     tournament: str
-    stage: str | None = None
+    stage: Optional[str] = None
     date: str
     weapon: str
 
 
 class TournamentSchema(BaseModel):
     name: str
-    url: str | None = None
-    slug: str | None = None
-    category: str | None = None
-    vk_link: str | None = None
+    url: Optional[str] = None
+    slug: Optional[str] = None
+    category: Optional[str] = None
+    vk_link: Optional[str] = None
 
 
 class SummarySchema(BaseModel):
-    events: int | None = None
-    categories: int | None = None
-    fights: int | None = None
+    events: Optional[int] = None
+    categories: Optional[int] = None
+    fights: Optional[int] = None
 
 
 class ProfileDataSchema(BaseModel):
-    name: str | None = None
-    club: str | None = None
-    country: str | None = None
-    location: str | None = None
-    summary: SummarySchema | None = None
+    name: Optional[str] = None
+    club: Optional[str] = None
+    country: Optional[str] = None
+    location: Optional[str] = None
+    summary: Optional[SummarySchema] = None
     weapons: list[WeaponSchema] = []
     fights: list[FightSchema] = []
     tournaments: list[TournamentSchema] = []
@@ -62,8 +63,6 @@ class ProfileDataSchema(BaseModel):
 
 class AnalyzeResponse(BaseModel):
     profile: ProfileDataSchema
-    target_dir: str
-    files_saved: list[str] = []
 
 
 class AnalyzeProfileRequest(BaseModel):
@@ -71,7 +70,7 @@ class AnalyzeProfileRequest(BaseModel):
 
 
 class AnalyzeExistingRequest(BaseModel):
-    data_dir: str
+    profile_link: str
 
 
 @app.post("/load_or_update_profile", response_model=AnalyzeResponse)
@@ -82,12 +81,10 @@ async def load_or_update_profile(request: AnalyzeProfileRequest):
     try:
         result = load_and_analyze_sync(
             profile_link=request.profile_link,
-            hemagon_api_url=HEMAGON_API_URL
+            HEMAGON_SCRAPPER_URL=HEMAGON_SCRAPPER_URL
         )
         return AnalyzeResponse(
-            profile=ProfileDataSchema(**result.get("profile", {})),
-            target_dir=result.get("target_dir", ""),
-            files_saved=result.get("files_saved", [])
+            profile=ProfileDataSchema(**result.profile)
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -96,31 +93,39 @@ async def load_or_update_profile(request: AnalyzeProfileRequest):
 @app.post("/get_existing_profile", response_model=AnalyzeResponse)
 async def get_existing_profile(request: AnalyzeExistingRequest):
     """
-    Get existing profile data. If result.json exists, return it. Otherwise analyze files.
+    Get existing profile data by profile_link. If result.json exists, return it. Otherwise analyze files.
     """
-    if not os.path.isdir(request.data_dir):
+    profile = get_profile(request.profile_link)
+    
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    
+    target_dir = profile.target_dir
+    
+    if not os.path.isdir(target_dir):
         raise HTTPException(status_code=404, detail="Directory not found")
     
-    result_json_path = os.path.join(request.data_dir, "result.json")
+    result_json_path = os.path.join(target_dir, "result.json")
     
     if os.path.isfile(result_json_path):
         with open(result_json_path, "r", encoding="utf-8") as f:
             result = json.load(f)
         return AnalyzeResponse(
-            profile=ProfileDataSchema(**result.get("profile", {})),
-            target_dir=result.get("target_dir", request.data_dir),
-            files_saved=result.get("files_saved", [])
+            profile=ProfileDataSchema(**result.get("profile", result))
         )
     
     try:
-        result = analyze_user_data_sync(request.data_dir)
+        result = analyze_user_data_sync(target_dir)
         return AnalyzeResponse(
-            profile=ProfileDataSchema(**result.get("profile", {})),
-            target_dir=request.data_dir,
-            files_saved=result.get("files_saved", [])
+            profile=ProfileDataSchema(**result.profile)
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.on_event("startup")
+async def startup_event():
+    init_db()
 
 
 @app.get("/health")

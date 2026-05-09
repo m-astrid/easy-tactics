@@ -4,7 +4,13 @@ Read user data from files and analyze with LLM
 import os
 import glob
 from typing import Optional
-from app.llm_client import create_llm_client, LLMClient
+from dataclasses import dataclass
+from llm import create_llm_client, LLMClient
+
+
+@dataclass
+class AnalyzeResult:
+    profile: dict
 
 
 def get_prompt_template() -> str:
@@ -37,7 +43,7 @@ def format_files_for_prompt(files: dict[str, str]) -> str:
     return "\n".join(formatted)
 
 
-def analyze_user_data(data_dir: str, llm_client: Optional[LLMClient] = None) -> dict:
+def analyze_user_data(data_dir: str, llm_client: Optional[LLMClient] = None) -> AnalyzeResult:
     """
     Read user data files and analyze with LLM.
     
@@ -46,7 +52,7 @@ def analyze_user_data(data_dir: str, llm_client: Optional[LLMClient] = None) -> 
         llm_client: Optional LLM client (creates default if not provided)
     
     Returns:
-        Structured JSON with user profile data
+        AnalyzeResult with profile data
     """
     if llm_client is None:
         llm_client = create_llm_client()
@@ -54,7 +60,7 @@ def analyze_user_data(data_dir: str, llm_client: Optional[LLMClient] = None) -> 
     files = read_all_files(data_dir)
     
     if not files:
-        return {"error": "No files found in directory", "directory": data_dir}
+        return AnalyzeResult(profile={"error": "No files found in directory", "directory": data_dir})
     
     template = get_prompt_template()
     files_content = format_files_for_prompt(files)
@@ -66,9 +72,9 @@ def analyze_user_data(data_dir: str, llm_client: Optional[LLMClient] = None) -> 
         user_prompt=user_prompt
     )
     
-    return result
+    return AnalyzeResult(profile=result)
 
 
-def analyze_user_data_sync(data_dir: str) -> dict:
+def analyze_user_data_sync(data_dir: str) -> AnalyzeResult:
     """Synchronous wrapper for analyze_user_data."""
     return analyze_user_data(data_dir)

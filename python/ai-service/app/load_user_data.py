@@ -6,8 +6,17 @@ import uuid
 import json
 import requests
 from typing import Optional
+from dataclasses import dataclass
 from app.read_user_data import analyze_user_data
-from app.llm_client import create_llm_client, LLMClient
+from llm import create_llm_client, LLMClient
+from store import init_db, get_profile, save_profile
+
+
+@dataclass
+class LoadAndAnalyzeResult:
+    profile: dict
+    target_dir: str
+    files_saved: list[str]
 
 
 DEFAULT_HEMAGON_API_URL = os.getenv("HEMAGON_API_URL", "http://localhost:8000")
@@ -18,7 +27,7 @@ def load_and_analyze(
     target_dir: Optional[str] = None,
     hemagon_api_url: str = DEFAULT_HEMAGON_API_URL,
     llm_client: Optional[LLMClient] = None
-) -> dict:
+) -> LoadAndAnalyzeResult:
     """
     Load profile from hemagon.com, save files, and analyze with LLM.
     
@@ -29,8 +38,14 @@ def load_and_analyze(
         llm_client: Optional LLM client
     
     Returns:
-        Dictionary with analysis result and file paths
+        LoadAndAnalyzeResult with analysis result and file paths
     """
+    init_db()
+    
+    existing = get_profile(profile_link)
+    if existing and target_dir is None:
+        target_dir = existing.target_dir
+    
     if target_dir is None:
         target_dir = os.path.join("/tmp", "hemagon_data", str(uuid.uuid4()))
     
@@ -47,21 +62,26 @@ def load_and_analyze(
     
     result = analyze_user_data(target_dir, llm_client)
     
-    result["target_dir"] = target_dir
-    result["files_saved"] = scrape_result.get("files_saved", [])
+    files_saved = scrape_result.get("files_saved", [])
     
     result_json_path = os.path.join(target_dir, "result.json")
     with open(result_json_path, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
-    result["files_saved"].append("result.json")
+    files_saved.append("result.json")
     
-    return result
+    save_profile(profile_link, target_dir, files_saved)
+    
+    return LoadAndAnalyzeResult(
+        profile=result,
+        target_dir=target_dir,
+        files_saved=files_saved
+    )
 
 
 def load_and_analyze_sync(
     profile_link: str,
     target_dir: Optional[str] = None,
     hemagon_api_url: str = DEFAULT_HEMAGON_API_URL
-) -> dict:
+) -> LoadAndAnalyzeResult:
     """Synchronous wrapper for load_and_analyze."""
     return load_and_analyze(profile_link, target_dir, hemagon_api_url)
