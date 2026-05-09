@@ -2,6 +2,7 @@
 HEMAGON AI Service - FastAPI Server
 """
 import os
+import json
 from typing import Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -95,10 +96,21 @@ async def load_or_update_profile(request: AnalyzeProfileRequest):
 @app.post("/get_existing_profile", response_model=AnalyzeResponse)
 async def get_existing_profile(request: AnalyzeExistingRequest):
     """
-    Analyze already saved profile data with LLM.
+    Get existing profile data. If result.json exists, return it. Otherwise analyze files.
     """
     if not os.path.isdir(request.data_dir):
         raise HTTPException(status_code=404, detail="Directory not found")
+    
+    result_json_path = os.path.join(request.data_dir, "result.json")
+    
+    if os.path.isfile(result_json_path):
+        with open(result_json_path, "r", encoding="utf-8") as f:
+            result = json.load(f)
+        return AnalyzeResponse(
+            profile=ProfileDataSchema(**result.get("profile", {})),
+            target_dir=result.get("target_dir", request.data_dir),
+            files_saved=result.get("files_saved", [])
+        )
     
     try:
         result = analyze_user_data_sync(request.data_dir)

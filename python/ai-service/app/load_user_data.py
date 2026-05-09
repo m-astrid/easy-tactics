@@ -3,6 +3,7 @@ Load user data from hemagon.com, save to files, and analyze with LLM
 """
 import os
 import uuid
+import json
 import requests
 from typing import Optional
 from app.read_user_data import analyze_user_data
@@ -46,8 +47,13 @@ def load_and_analyze(
     
     result = analyze_user_data(target_dir, llm_client)
     
-    result["files_saved"] = scrape_result.get("files_saved", [])
     result["target_dir"] = target_dir
+    result["files_saved"] = scrape_result.get("files_saved", [])
+    
+    result_json_path = os.path.join(target_dir, "result.json")
+    with open(result_json_path, "w", encoding="utf-8") as f:
+        json.dump(result, f, ensure_ascii=False, indent=2)
+    result["files_saved"].append("result.json")
     
     return result
 
