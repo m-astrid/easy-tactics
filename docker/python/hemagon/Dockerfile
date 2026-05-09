@@ -7,7 +7,6 @@ RUN pip install --no-cache-dir playwright && \
     playwright install-deps
 
 COPY python/hemagon/ /app/
-COPY python/mcp/hemagon/scraper.py /app/
 
 RUN pip install --no-cache-dir fastapi uvicorn[standard] playwright requests
 
