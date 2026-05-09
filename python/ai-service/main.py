@@ -73,8 +73,8 @@ class AnalyzeExistingRequest(BaseModel):
     data_dir: str
 
 
-@app.post("/analyze_profile", response_model=AnalyzeResponse)
-async def analyze_profile(request: AnalyzeProfileRequest):
+@app.post("/load_or_update_profile", response_model=AnalyzeResponse)
+async def load_or_update_profile(request: AnalyzeProfileRequest):
     """
     Load profile from hemagon.com, save files, and analyze with LLM.
     """
@@ -92,8 +92,8 @@ async def analyze_profile(request: AnalyzeProfileRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/analyze_existing", response_model=AnalyzeResponse)
-async def analyze_existing(request: AnalyzeExistingRequest):
+@app.post("/get_existing_profile", response_model=AnalyzeResponse)
+async def get_existing_profile(request: AnalyzeExistingRequest):
     """
     Analyze already saved profile data with LLM.
     """
