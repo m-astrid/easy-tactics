@@ -2,6 +2,7 @@
 HEMAGON AI Service - FastAPI Server
 """
 import os
+from typing import Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from app.load_user_data import load_and_analyze_sync
@@ -12,6 +13,58 @@ app = FastAPI(title="HEMAGON AI Service")
 HEMAGON_API_URL = os.getenv("HEMAGON_API_URL", "http://localhost:8000")
 
 
+class WeaponSchema(BaseModel):
+    name: str
+    rank: int | None = None
+    rating: int | None = None
+    events: int | None = None
+    fights: int | None = None
+    win_percent: int | None = None
+
+
+class FightSchema(BaseModel):
+    opponent: str
+    club: str | None = None
+    user_score: int
+    opponent_score: int
+    result: str
+    tournament: str
+    stage: str | None = None
+    date: str
+    weapon: str
+
+
+class TournamentSchema(BaseModel):
+    name: str
+    url: str | None = None
+    slug: str | None = None
+    category: str | None = None
+    vk_link: str | None = None
+
+
+class SummarySchema(BaseModel):
+    events: int | None = None
+    categories: int | None = None
+    fights: int | None = None
+
+
+class ProfileDataSchema(BaseModel):
+    name: str | None = None
+    club: str | None = None
+    country: str | None = None
+    location: str | None = None
+    summary: SummarySchema | None = None
+    weapons: list[WeaponSchema] = []
+    fights: list[FightSchema] = []
+    tournaments: list[TournamentSchema] = []
+
+
+class AnalyzeResponse(BaseModel):
+    profile: ProfileDataSchema
+    target_dir: str
+    files_saved: list[str] = []
+
+
 class AnalyzeProfileRequest(BaseModel):
     profile_link: str
 
@@ -20,7 +73,7 @@ class AnalyzeExistingRequest(BaseModel):
     data_dir: str
 
 
-@app.post("/analyze_profile")
+@app.post("/analyze_profile", response_model=AnalyzeResponse)
 async def analyze_profile(request: AnalyzeProfileRequest):
     """
     Load profile from hemagon.com, save files, and analyze with LLM.
@@ -30,12 +83,16 @@ async def analyze_profile(request: AnalyzeProfileRequest):
             profile_link=request.profile_link,
             hemagon_api_url=HEMAGON_API_URL
         )
-        return result
+        return AnalyzeResponse(
+            profile=ProfileDataSchema(**result.get("profile", {})),
+            target_dir=result.get("target_dir", ""),
+            files_saved=result.get("files_saved", [])
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/analyze_existing")
+@app.post("/analyze_existing", response_model=AnalyzeResponse)
 async def analyze_existing(request: AnalyzeExistingRequest):
     """
     Analyze already saved profile data with LLM.
@@ -45,8 +102,11 @@ async def analyze_existing(request: AnalyzeExistingRequest):
     
     try:
         result = analyze_user_data_sync(request.data_dir)
-        result["target_dir"] = request.data_dir
-        return result
+        return AnalyzeResponse(
+            profile=ProfileDataSchema(**result.get("profile", {})),
+            target_dir=request.data_dir,
+            files_saved=result.get("files_saved", [])
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
