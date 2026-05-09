@@ -1,25 +1,54 @@
 """
-HEMAGON FastAPI Server
+HEMAGON AI Service - FastAPI Server
 """
-from fastapi import FastAPI
+import os
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from scraper import load_user_profile_async
-from datetime import datetime
+from app.load_user_data import load_and_analyze_sync
+from app.read_user_data import analyze_user_data_sync
 
-app = FastAPI(title="HEMAGON API")
+app = FastAPI(title="HEMAGON AI Service")
+
+HEMAGON_API_URL = os.getenv("HEMAGON_API_URL", "http://localhost:8000")
 
 
-class LoadProfileRequest(BaseModel):
+class AnalyzeProfileRequest(BaseModel):
     profile_link: str
-    date_from: datetime.DateTime
-    date_to: datetime.DateTime
 
 
-@app.post("/load_user_profile")
-async def load_user_profile_endpoint(request: LoadProfileRequest):
-    """Load a HEMA fighter's profile from hemagon.com"""
-    result = await load_user_profile_async(request.profile_link, request.date_from, request.date_to)
-    return result
+class AnalyzeExistingRequest(BaseModel):
+    data_dir: str
+
+
+@app.post("/analyze_profile")
+async def analyze_profile(request: AnalyzeProfileRequest):
+    """
+    Load profile from hemagon.com, save files, and analyze with LLM.
+    """
+    try:
+        result = load_and_analyze_sync(
+            profile_link=request.profile_link,
+            hemagon_api_url=HEMAGON_API_URL
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/analyze_existing")
+async def analyze_existing(request: AnalyzeExistingRequest):
+    """
+    Analyze already saved profile data with LLM.
+    """
+    if not os.path.isdir(request.data_dir):
+        raise HTTPException(status_code=404, detail="Directory not found")
+    
+    try:
+        result = analyze_user_data_sync(request.data_dir)
+        result["target_dir"] = request.data_dir
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/health")
