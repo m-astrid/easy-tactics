@@ -3,7 +3,6 @@ FROM python:3.11-slim
 WORKDIR /app
 
 COPY python/ai-service/ /app/
-COPY python/ai-service/prompts/ /app/prompts/
 
 RUN pip install --no-cache-dir fastapi uvicorn[standard] requests
 

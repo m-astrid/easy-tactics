@@ -34,3 +34,4 @@ data/*.db
 # Worktrees
 .worktrees/
 worktrees/
+/tmp/

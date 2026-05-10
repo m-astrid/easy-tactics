@@ -3,9 +3,17 @@ Read user data from files and analyze with LLM
 """
 import os
 import glob
+import logging
+import json
 from typing import Optional
 from dataclasses import dataclass
 from llm import create_llm_client, LLMClient
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -67,12 +75,17 @@ def analyze_user_data(data_dir: str, llm_client: Optional[LLMClient] = None) -> 
     
     user_prompt = template.replace("{__filecontent__}", files_content)
     
+    logger.debug("Sending request to LLM for data_dir: %s", data_dir)
+    
     result = llm_client.chat(
         system_prompt="Ты — ассистент для структурирования данных о бойцах HEMA. Ты анализируешь текстовые файлы с данными о выступлениях и формируешь JSON в точности по указанной схеме.",
         user_prompt=user_prompt
     )
+
+    with open(os.path.join(data_dir, 'result.json'), 'w') as f:
+        json.dump(result, f, ensure_ascii=False, indent=2)
     
-    return AnalyzeResult(profile=result)
+    return AnalyzeResult(profile=result.get("profile", result))
 
 
 def analyze_user_data_sync(data_dir: str) -> AnalyzeResult:

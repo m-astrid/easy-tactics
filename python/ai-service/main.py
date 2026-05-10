@@ -1,5 +1,5 @@
 """
-HEMAGON AI Service - FastAPI Server
+EXPLOIT AI Service - FastAPI Server
 """
 import os
 import json
@@ -10,7 +10,7 @@ from app.load_user_data import load_and_analyze_sync
 from app.read_user_data import analyze_user_data_sync
 from store import init_db, get_profile
 
-app = FastAPI(title="HEMAGON AI Service")
+app = FastAPI(title="EXPLOIT AI Service")
 
 HEMAGON_SCRAPPER_URL = os.getenv("HEMAGON_SCRAPPER_URL", "http://localhost:8000")
 
@@ -81,7 +81,7 @@ async def load_or_update_profile(request: AnalyzeProfileRequest):
     try:
         result = load_and_analyze_sync(
             profile_link=request.profile_link,
-            HEMAGON_SCRAPPER_URL=HEMAGON_SCRAPPER_URL
+            hemagon_api_url=HEMAGON_SCRAPPER_URL
         )
         return AnalyzeResponse(
             profile=ProfileDataSchema(**result.profile)
@@ -110,17 +110,17 @@ async def get_existing_profile(request: AnalyzeExistingRequest):
     if os.path.isfile(result_json_path):
         with open(result_json_path, "r", encoding="utf-8") as f:
             result = json.load(f)
+        
+        profile_data = result.get("profile", result)
+        
         return AnalyzeResponse(
-            profile=ProfileDataSchema(**result.get("profile", result))
+            profile=ProfileDataSchema(**profile_data)
         )
-    
-    try:
-        result = analyze_user_data_sync(target_dir)
-        return AnalyzeResponse(
-            profile=ProfileDataSchema(**result.profile)
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
+    result = analyze_user_data_sync(target_dir)
+    return AnalyzeResponse(
+        profile=ProfileDataSchema(**result.profile)
+    )
 
 
 @app.on_event("startup")

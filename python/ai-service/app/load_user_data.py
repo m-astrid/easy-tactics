@@ -40,14 +40,13 @@ def load_and_analyze(
     Returns:
         LoadAndAnalyzeResult with analysis result and file paths
     """
-    init_db()
     
     existing = get_profile(profile_link)
     if existing and target_dir is None:
         target_dir = existing.target_dir
     
     if target_dir is None:
-        target_dir = os.path.join("/tmp", "hemagon_data", str(uuid.uuid4()))
+        target_dir = os.path.join("/tmp", "hemagon_data", profile_link.split("/")[-1])
     
     os.makedirs(target_dir, exist_ok=True)
     
@@ -60,19 +59,24 @@ def load_and_analyze(
     
     scrape_result = response.json()
     
+    files_saved = scrape_result.get("files_saved", [])
+
+    save_profile(profile_link, target_dir, files_saved)
+    
     result = analyze_user_data(target_dir, llm_client)
     
-    files_saved = scrape_result.get("files_saved", [])
-    
     result_json_path = os.path.join(target_dir, "result.json")
-    with open(result_json_path, "w", encoding="utf-8") as f:
-        json.dump(result, f, ensure_ascii=False, indent=2)
-    files_saved.append("result.json")
-    
+    try:
+        with open(vk_filepath, "w", encoding="utf-8") as f:
+            json.dump(result, f, ensure_ascii=False, indent=2)
+        files_saved.append("result.json")
+    except Exception as e:
+        print(f"Failed to write result.json: {e}")
+
     save_profile(profile_link, target_dir, files_saved)
     
     return LoadAndAnalyzeResult(
-        profile=result,
+        profile=result if isinstance(result, dict) else result.profile,
         target_dir=target_dir,
         files_saved=files_saved
     )

@@ -29,11 +29,16 @@ services:
     build:
       context: .
       dockerfile: ./docker/python/ai-service/Dockerfile
+    env_file:
+      - .env
     ports:
       - "8001:8001"
+    volumes:
+      - ./tmp/volumes/ai-service/loaded_data:/tmp/hemagon_data
+      - ./tmp/volumes/ai-service/db:/tmp/db
     environment:
-      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
-      - HEMAGON_API_URL=http://hemagon-api:8000
+      - HEMAGON_SCRAPPER_URL=http://hemagon-api:8000
+      - AI_SERVICE_DB_PATH=/tmp/db/ai-service.db
     depends_on:
       - hemagon-api
 
@@ -43,6 +48,8 @@ services:
       dockerfile: ./docker/python/hemagon/Dockerfile
     ports:
       - "8000:8000"
+    volumes:
+      - ./tmp/volumes/ai-service/loaded_data:/tmp/hemagon_data
 
 #  vk-mcp:
 #    build: ./docker/python/mcp/vk
